@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "409660395028",
+    "firebase_url": "https://residentialmanagingapp-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "residentialmanagingapp",
+    "storage_bucket": "residentialmanagingapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:409660395028:android:b6b98e55aa354a85e46101",
+        "android_client_info": {
+          "package_name": "com.example.residential_management_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzf0k4KgDRPVPFFtjoQ5kNXgoPMH8SIHg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

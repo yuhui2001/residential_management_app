@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyAfsZpPAId9mdov74KCT__9eWvcyMAKwKc</string>
+	<key>GCM_SENDER_ID</key>
+	<string>409660395028</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.residentialManagementApp.RunnerTests</string>
+	<key>PROJECT_ID</key>
+	<string>residentialmanagingapp</string>
+	<key>STORAGE_BUCKET</key>
+	<string>residentialmanagingapp.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:409660395028:ios:5358c10a3854c8a2e46101</string>
+	<key>DATABASE_URL</key>
+	<string>https://residentialmanagingapp-default-rtdb.asia-southeast1.firebasedatabase.app</string>
+</dict>
+</plist>
