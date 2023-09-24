@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'SMART Jiran',
       theme: ThemeData(),
-      home: VisitorInvitePage(),
+      home: FileReportPage(),
     );
   }
 }
