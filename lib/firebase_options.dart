@@ -49,8 +49,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '409660395028',
     projectId: 'residentialmanagingapp',
     authDomain: 'residentialmanagingapp.firebaseapp.com',
-    databaseURL:
-        'https://residentialmanagingapp-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL: 'https://residentialmanagingapp-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'residentialmanagingapp.appspot.com',
     measurementId: 'G-035SZJ1X5V',
   );
@@ -60,8 +59,7 @@ class DefaultFirebaseOptions {
     appId: '1:409660395028:android:b6b98e55aa354a85e46101',
     messagingSenderId: '409660395028',
     projectId: 'residentialmanagingapp',
-    databaseURL:
-        'https://residentialmanagingapp-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL: 'https://residentialmanagingapp-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'residentialmanagingapp.appspot.com',
   );
 
@@ -70,8 +68,7 @@ class DefaultFirebaseOptions {
     appId: '1:409660395028:ios:22fe21310d0edd99e46101',
     messagingSenderId: '409660395028',
     projectId: 'residentialmanagingapp',
-    databaseURL:
-        'https://residentialmanagingapp-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL: 'https://residentialmanagingapp-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'residentialmanagingapp.appspot.com',
     iosBundleId: 'com.example.residentialManagementApp',
   );
@@ -81,8 +78,7 @@ class DefaultFirebaseOptions {
     appId: '1:409660395028:ios:5358c10a3854c8a2e46101',
     messagingSenderId: '409660395028',
     projectId: 'residentialmanagingapp',
-    databaseURL:
-        'https://residentialmanagingapp-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL: 'https://residentialmanagingapp-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'residentialmanagingapp.appspot.com',
     iosBundleId: 'com.example.residentialManagementApp.RunnerTests',
   );

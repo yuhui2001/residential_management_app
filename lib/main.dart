@@ -7,6 +7,7 @@ import 'package:residential_management_app/LoginPage.dart';
 import 'package:residential_management_app/ProfilePage.dart';
 import 'package:residential_management_app/VisitorInvitePage.dart';
 
+// if change divice, remember to do flutterfire configure and override directory.
 void main() {
   runApp(MyApp());
 }
