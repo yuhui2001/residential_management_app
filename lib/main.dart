@@ -6,8 +6,15 @@ import 'package:residential_management_app/HouseCleaningPage.dart';
 import 'package:residential_management_app/LoginPage.dart';
 import 'package:residential_management_app/ProfilePage.dart';
 import 'package:residential_management_app/VisitorInvitePage.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+// if change divice, remember to do flutterfire configure and override directory.
+void main() async {
+   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(MyApp());
 }
 
