@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:residential_management_app/VisitorQRPage.dart';
+
 
 List<String> titles = <String>['Invite', 'History'];
 
@@ -128,7 +130,9 @@ class _InvitePageState extends State<InvitePage> {
                     height: 60,
                     width: screenWidth * 0.3,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute (builder: (context) => VisitorQRPage()));
+                      },
                       child: Text("Create invite"),
                     ),
                   ),

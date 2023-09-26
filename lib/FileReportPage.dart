@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 class FileReportPage extends StatelessWidget {
   var collection = FirebaseFirestore.instance.collection("user");
 
-  _dataChanger(userName) async {
+  _dataChanger(userName,userID) async {
     collection.add({
       "user": userName,
-      "userID": "USR00001",
+      "userID": userID,
     });
   }
 
@@ -77,12 +77,12 @@ class FileReportPage extends StatelessWidget {
                                   height: 40,
                                   child: ElevatedButton(
                                       onPressed: () {
-                                        _dataChanger("try");
+                                        _dataChanger("try","USR89347");
                                         Navigator.of(context).pop();
                                       },
                                       child: Text(
                                         "OK",
-                                        style: TextStyle(fontSize: 16),
+                                        style: TextStyle(fontSize: 16), 
                                       )))
                             ],
                           );
