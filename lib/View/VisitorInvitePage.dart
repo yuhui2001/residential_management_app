@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:residential_management_app/VisitorQRPage.dart';
+import 'package:residential_management_app/View/VisitorQRPage.dart';
 
 
 List<String> titles = <String>['Invite', 'History'];

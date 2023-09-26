@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:residential_management_app/AnnouncementPage.dart';
-import 'package:residential_management_app/BookFacilityPage.dart';
-import 'package:residential_management_app/ProfilePage.dart';
-import 'package:residential_management_app/VisitorInvitePage.dart';
-import 'package:residential_management_app/FileReportPage.dart';
-import 'package:residential_management_app/ScheduleEventPage.dart';
-import 'package:residential_management_app/HouseCleaningPage.dart';
-import 'package:residential_management_app/MaintenancePage.dart';
+import 'package:residential_management_app/View/AnnouncementPage.dart';
+import 'package:residential_management_app/View/BookFacilityPage.dart';
+import 'package:residential_management_app/View/ProfilePage.dart';
+import 'package:residential_management_app/View/VisitorInvitePage.dart';
+import 'package:residential_management_app/View/FileReportPage.dart';
+import 'package:residential_management_app/View/ScheduleEventPage.dart';
+import 'package:residential_management_app/View/HouseCleaningPage.dart';
+import 'package:residential_management_app/View/MaintenancePage.dart';
 
 class HomePage extends StatefulWidget {
   @override

@@ -1,5 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:residential_management_app/HomePage.dart';
+import 'package:residential_management_app/View/HomePage.dart';
+import 'package:residential_management_app/Model/UserModel.dart';
+import 'package:residential_management_app/Controller/LoginController.dart';
+
+class LoginController {
+  final UserModel userModel = UserModel();
+
+  Future<bool> login(String username, String password) async {
+    // Fetch user data based on the provided username
+    final userData = await userModel.getUserData(username);
+
+    if (userData != null) {
+      // Check if the password matches the stored password
+      final storedPassword = userData['password'];
+
+      if (storedPassword == password) {
+        // Password matches, login successful
+        return true;
+      }
+    }
+
+    // Invalid username or password, login failed
+    return false;
+  }
+}
 
 class LoginPage extends StatefulWidget {
   @override
@@ -7,17 +31,38 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final LoginController loginController = LoginController();
   bool isHidden = true;
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
-  // Function to handle the "Login" button press
-  void handleLoginButtonPress() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => HomePage()));
+  void handleLoginButtonPress() async {
+    // Retrieve the username and password from the text fields
+    final username = usernameController.text;
+    final password = passwordController.text;
+
+    // Call the login method to check credentials
+    final loggedIn = await loginController.login(username, password);
+
+    if (loggedIn) {
+      // Navigate to the homepage if login is successful
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
+    } else {
+      // Display an error message (you can implement this)
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Invalid username or password"),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width; // get screen size
+    double screenWidth = MediaQuery.of(context).size.width;
     double inputFieldWidthPercentage = 0.5;
 
     return Scaffold(
@@ -27,7 +72,6 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Icon
               Text(
                 "SMART JIRAN",
                 style: TextStyle(
@@ -42,6 +86,7 @@ class _LoginPageState extends State<LoginPage> {
               Container(
                 width: screenWidth * inputFieldWidthPercentage,
                 child: TextFormField(
+                  controller: usernameController,
                   decoration: InputDecoration(
                     hintText: "Username",
                   ),
@@ -54,6 +99,7 @@ class _LoginPageState extends State<LoginPage> {
               Container(
                 width: screenWidth * inputFieldWidthPercentage,
                 child: TextFormField(
+                  controller: passwordController,
                   obscureText: isHidden,
                   decoration: InputDecoration(
                     suffixIcon: IconButton(
@@ -75,8 +121,7 @@ class _LoginPageState extends State<LoginPage> {
 
               TextButton(
                 onPressed: handleLoginButtonPress,
-                child: Text(
-                    "Login"), // Specify the label using the "child" property
+                child: Text("Login"),
               )
             ],
           ),

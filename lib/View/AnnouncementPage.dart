@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:residential_management_app/HomePage.dart';
-import 'package:residential_management_app/ProfilePage.dart';
+import 'package:residential_management_app/View/HomePage.dart';
+import 'package:residential_management_app/View/ProfilePage.dart';
 
 class AnnouncementPage extends StatefulWidget {
   @override

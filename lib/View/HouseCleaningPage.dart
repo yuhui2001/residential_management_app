@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:residential_management_app/HouseCleaningTermsPage.dart';
+import 'package:residential_management_app/View/HouseCleaningTermsPage.dart';
 
 class HouseCleaningPage extends StatelessWidget {
   @override

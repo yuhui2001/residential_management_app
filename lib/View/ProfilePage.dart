@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:residential_management_app/BookingHistoryPage.dart';
-import 'package:residential_management_app/HomePage.dart';
-import 'package:residential_management_app/AnnouncementPage.dart';
-import 'package:residential_management_app/LoginPage.dart';
-import 'package:residential_management_app/TransactionHistoryPage.dart';
+import 'package:residential_management_app/View/BookingHistoryPage.dart';
+import 'package:residential_management_app/View/HomePage.dart';
+import 'package:residential_management_app/View/AnnouncementPage.dart';
+import 'package:residential_management_app/View/LoginPage.dart';
+import 'package:residential_management_app/View/TransactionHistoryPage.dart';
+import 'package:residential_management_app/Controller/LoginController.dart';
 
 class ProfilePage extends StatefulWidget {
+  
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }

@@ -1,17 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-
 class FileReportPage extends StatelessWidget {
-  var collection = FirebaseFirestore.instance.collection("user");
-
-  _dataChanger(userName,userID) async {
-    collection.add({
-      "user": userName,
-      "userID": userID,
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -73,17 +62,18 @@ class FileReportPage extends StatelessWidget {
                             actionsAlignment: MainAxisAlignment.center,
                             actions: [
                               Container(
-                                  width: screenWidth * 0.1,
-                                  height: 40,
-                                  child: ElevatedButton(
-                                      onPressed: () {
-                                        _dataChanger("try","USR89347");
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Text(
-                                        "OK",
-                                        style: TextStyle(fontSize: 16), 
-                                      )))
+                                width: screenWidth * 0.1,
+                                height: 40,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text(
+                                    "OK",
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                ),
+                              ),
                             ],
                           );
                         });
