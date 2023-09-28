@@ -1,8 +1,10 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:residential_management_app/Controller/VisitorInviteController.dart';
 import 'package:residential_management_app/View/VisitorQRPage.dart';
-
 
 List<String> titles = <String>['Invite', 'History'];
 
@@ -25,6 +27,18 @@ class InvitePage extends StatefulWidget {
 class _InvitePageState extends State<InvitePage> {
   late DateTime date;
   TimeOfDay? time;
+  final TextEditingController visitorDateController = TextEditingController();
+  final TextEditingController visitorTimeController = TextEditingController();
+
+  handleButtonPress() {
+    final visitorName = widget.nameController.text;
+    final int visitorNumber = int.parse(widget.phoneNumberController.text);
+    final String visitorDate = visitorDateController.text;
+    final String visitorTime = visitorTimeController.text;
+
+    VisitorInviteController()
+        .invite(visitorName, visitorNumber, visitorDate, visitorTime);
+  }
 
   @override
   void initState() {
@@ -46,22 +60,27 @@ class _InvitePageState extends State<InvitePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Name: "),
+            Text("Visitor name: "),
             TextFormField(
               controller: widget.nameController,
-              decoration: InputDecoration(hintText: "Visitor name"),
+              decoration: InputDecoration(
+                  hintText: "Example: Smartjiran or smartjiran"),
             ),
             SizedBox(
               height: screenHeight * 0.01,
             ),
+
+            /////////////////////
             Text("Visitor phone number: "),
             TextFormField(
               controller: widget.phoneNumberController,
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              decoration: InputDecoration(hintText: "Phone number without +6"),
+              decoration: InputDecoration(hintText: "Example: 0123456789"),
             ),
             Text(""),
+
+            ////////////////////
             Text("Date:\n"),
             Text(
               date != null
@@ -82,12 +101,17 @@ class _InvitePageState extends State<InvitePage> {
                 if (newDate == null) return;
 
                 setState(() {
-                  date = newDate; // Update the selected date
+                  date = newDate; // update the selected date
                 });
+
+                final formattedDate = '${newDate.toString()}';
+                visitorDateController.text = formattedDate;
               },
               child: Text("Choose date"),
             ),
             Text(""),
+
+            ////////////////////
             Text("Time:\n"),
             Text(
               time != null
@@ -107,10 +131,17 @@ class _InvitePageState extends State<InvitePage> {
                 setState(() {
                   time = selectedTime;
                 });
+
+                final formattedTime =
+                    '${selectedTime.hour.toString().padLeft(2, '0')}:${selectedTime.minute.toString().padLeft(2, '0')}';
+                visitorTimeController.text = formattedTime;
               },
               child: Text("Choose time"),
             ),
+
             Spacer(),
+
+            /////////////////
             Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -126,12 +157,18 @@ class _InvitePageState extends State<InvitePage> {
                   SizedBox(
                     height: screenHeight * 0.03,
                   ),
+
+                  ////////////////////////
                   Container(
                     height: 60,
                     width: screenWidth * 0.3,
                     child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(context, MaterialPageRoute (builder: (context) => VisitorQRPage()));
+                      onPressed: () async {
+                        await handleButtonPress();
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => VisitorQRPage()));
                       },
                       child: Text("Create invite"),
                     ),

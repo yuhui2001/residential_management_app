@@ -45,6 +45,8 @@ class FileReportPage extends StatelessWidget {
               child: Container(
                 height: 60,
                 width: screenWidth * 0.3,
+                /////////////////////////
+                
                 child: ElevatedButton(
                   onPressed: () {
                     showDialog(

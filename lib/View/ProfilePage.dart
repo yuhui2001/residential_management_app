@@ -28,7 +28,7 @@ class _ProfilePageState extends State<ProfilePage> {
               case 1:
                 return AnnouncementPage();
               default:
-                return ProfilePage(); // Default to the first screen
+                return ProfilePage();
             }
           },
         ),
@@ -38,7 +38,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final userData = UserData.user!; // Use the ! operator to assert non-null
+    final userData = UserData.user!; // to state that i is not null
     final name = userData.name;
     final address = userData.address;
 

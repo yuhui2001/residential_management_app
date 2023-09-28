@@ -5,19 +5,19 @@ class UserModel {
 
   Future<Map<String, dynamic>?> getUserData(String username) async {
     try {
-      // Reference to the "user" collection
+      // reference to the "user" collection
       CollectionReference users = _firestore.collection('user');
 
-      // Query for a specific document using the "username" field
+      // Query for a username only
       QuerySnapshot querySnapshot =
           await users.where('username', isEqualTo: username).get();
 
-      // Check if any documents match the query
+      // check if any document match the query thing
       if (querySnapshot.docs.isNotEmpty) {
-        // Return the data from the first document found (assuming usernames are unique)
+        // return the data from the first document found
         return querySnapshot.docs.first.data() as Map<String, dynamic>;
       } else {
-        // No document found with the specified username
+        // no matching username
         return null;
       }
     } catch (e) {

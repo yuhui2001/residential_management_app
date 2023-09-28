@@ -15,18 +15,18 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController passwordController = TextEditingController();
 
   void handleLoginButtonPress() async {
-    // Retrieve the username and password from the text fields
+    // get username and password form input field
     final username = usernameController.text;
     final password = passwordController.text;
 
-    // Call the login method to check credentials
+    // login process, loginController will check
     final userData = await loginController.login(username, password);
 
     if (userData != null) {
-      // Set the global user object in UserData
+      // if login success, set the global user object in UserData
       UserData.user = userData;
 
-      // Navigate to the homepage if login is successful
+      // then navaigate to homepage
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -34,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
       );
     } else {
-      // Display an error message (you can implement this)
+      // login failed
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Invalid username or password"),
