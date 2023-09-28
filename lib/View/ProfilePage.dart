@@ -4,10 +4,9 @@ import 'package:residential_management_app/View/HomePage.dart';
 import 'package:residential_management_app/View/AnnouncementPage.dart';
 import 'package:residential_management_app/View/LoginPage.dart';
 import 'package:residential_management_app/View/TransactionHistoryPage.dart';
-import 'package:residential_management_app/Controller/LoginController.dart';
+import 'package:residential_management_app/Model/UserData.dart';
 
 class ProfilePage extends StatefulWidget {
-  
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
@@ -39,6 +38,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final userData = UserData.user!; // Use the ! operator to assert non-null
+    final name = userData.name;
+    final address = userData.address;
+
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -61,11 +64,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Name:",
-                    textAlign: TextAlign.left,
-                  ),
-                  Text(
-                    "Person 1",
+                    "Name: \n${name}",
                     textAlign: TextAlign.left,
                   ),
                 ],
@@ -77,8 +76,7 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Address:"),
-                  Text("Some address"),
+                  Text("Address: \n${address}"),
                 ],
               ),
             ),

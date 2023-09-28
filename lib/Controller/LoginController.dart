@@ -1,9 +1,10 @@
 import 'package:residential_management_app/Model/UserModel.dart';
+import 'package:residential_management_app/Model/UserData.dart';
 
 class LoginController {
   final UserModel userModel = UserModel();
 
-  Future<Map<String, dynamic>?> login(String username, String password) async {
+  Future<UserData?> login(String username, String password) async {
     // Fetch user data based on the provided username
     final userData = await userModel.getUserData(username);
 
@@ -13,10 +14,13 @@ class LoginController {
 
       if (storedPassword == password) {
         // Password matches, login successful
-        return {
-          'userID': userData['userID'] as String,
-          'name': userData['name'] as String,
-        };
+        final user = UserData(
+          address: userData['address'],
+          name: userData['name'],
+          userid: userData['userid'],
+          username: username,
+        );
+        return user;
       }
     }
 
@@ -24,6 +28,3 @@ class LoginController {
     return null;
   }
 }
-
-
-

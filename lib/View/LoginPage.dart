@@ -1,29 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:residential_management_app/View/HomePage.dart';
-import 'package:residential_management_app/Model/UserModel.dart';
+import 'package:residential_management_app/Model/UserData.dart';
 import 'package:residential_management_app/Controller/LoginController.dart';
-
-class LoginController {
-  final UserModel userModel = UserModel();
-
-  Future<bool> login(String username, String password) async {
-    // Fetch user data based on the provided username
-    final userData = await userModel.getUserData(username);
-
-    if (userData != null) {
-      // Check if the password matches the stored password
-      final storedPassword = userData['password'];
-
-      if (storedPassword == password) {
-        // Password matches, login successful
-        return true;
-      }
-    }
-
-    // Invalid username or password, login failed
-    return false;
-  }
-}
 
 class LoginPage extends StatefulWidget {
   @override
@@ -42,13 +20,18 @@ class _LoginPageState extends State<LoginPage> {
     final password = passwordController.text;
 
     // Call the login method to check credentials
-    final loggedIn = await loginController.login(username, password);
+    final userData = await loginController.login(username, password);
 
-    if (loggedIn) {
+    if (userData != null) {
+      // Set the global user object in UserData
+      UserData.user = userData;
+
       // Navigate to the homepage if login is successful
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(
+          builder: (context) => HomePage(),
+        ),
       );
     } else {
       // Display an error message (you can implement this)
