@@ -1,9 +1,10 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:residential_management_app/Controller/VisitorInviteController.dart';
+import 'package:residential_management_app/Controller/VisitorInviteHistoryController.dart';
+import 'package:residential_management_app/Model/UserData.dart';
+import 'package:residential_management_app/View/HomePage.dart';
 import 'package:residential_management_app/View/VisitorQRPage.dart';
 
 List<String> titles = <String>['Invite', 'History'];
@@ -25,7 +26,7 @@ class InvitePage extends StatefulWidget {
 }
 
 class _InvitePageState extends State<InvitePage> {
-  late DateTime date;
+  late DateTime? date;
   TimeOfDay? time;
   final TextEditingController visitorDateController = TextEditingController();
   final TextEditingController visitorTimeController = TextEditingController();
@@ -43,7 +44,7 @@ class _InvitePageState extends State<InvitePage> {
   @override
   void initState() {
     super.initState();
-    date = DateTime.now();
+    date = null;
   }
 
   @override
@@ -76,15 +77,17 @@ class _InvitePageState extends State<InvitePage> {
               controller: widget.phoneNumberController,
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              decoration: InputDecoration(hintText: "Example: 0123456789"),
+              decoration: InputDecoration(
+                  prefixText: "+60", hintText: " Example: 123456789"),
             ),
+
             Text(""),
 
             ////////////////////
             Text("Date:\n"),
             Text(
               date != null
-                  ? DateFormat('yyyy-MM-dd').format(date)
+                  ? DateFormat('yyyy-MM-dd').format(date!)
                   : "", // show selected date or nothing if none chosen
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
@@ -93,15 +96,17 @@ class _InvitePageState extends State<InvitePage> {
               onPressed: () async {
                 DateTime? newDate = await showDatePicker(
                   context: context,
-                  initialDate: date,
+                  initialDate: date ?? DateTime.now(),
                   firstDate: DateTime.now(),
                   lastDate: DateTime(2100),
                 );
 
-                if (newDate == null) return;
+                if (newDate == null) {
+                  newDate = DateTime.now();
+                }
 
                 setState(() {
-                  date = newDate; // update the selected date
+                  date = newDate!; // update the selected date
                 });
 
                 final formattedDate = '${newDate.toString()}';
@@ -186,35 +191,119 @@ class _InvitePageState extends State<InvitePage> {
   }
 }
 
+class InviteHistory {
+  final String visitorName;
+  final String visitorNumber;
+
+  InviteHistory({
+    required this.visitorName,
+    required this.visitorNumber,
+  });
+
+  factory InviteHistory.fromMap(Map<String, dynamic> map) {
+    return InviteHistory(
+      visitorName: map['Visitor_Name'],
+      visitorNumber: map['Invitation_Contact'],
+    );
+  }
+}
+
 class InviteHistoryPage extends StatelessWidget {
   final TextEditingController nameController;
   final TextEditingController phoneNumberController;
+  final TextEditingController visitorDateController;
   final TabController tabController;
 
   const InviteHistoryPage({
     Key? key,
     required this.nameController,
     required this.phoneNumberController,
+    required this.visitorDateController,
     required this.tabController,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final userData = UserData.user!;
+    final userId = userData.userid;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: Column(
-        children: [
-          ElevatedButton(
-            onPressed: () {
-              // Pass text to InvitePage for both Name and Phone number fields
-              nameController.text = "I AM NAME";
-              phoneNumberController.text = "0125698753";
+      body: FutureBuilder<List<List<dynamic>>>(
+        future: VisitorInviteHistoryController(userId).getInviteHistory(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            List<List<dynamic>> inviteHistory = snapshot.data ?? [];
 
-              // Switch to the Invite tab
-              tabController.animateTo(0);
-            },
-            child: Text("Pass Text and Switch"),
-          ),
-        ],
+            return SingleChildScrollView(
+              child: Column(
+                children: inviteHistory.map((data) {
+                  String visitorName = data[0];
+                  String visitDate = data[1];
+                  String visitorContact = data[2];
+
+                  return Container(
+                    padding: EdgeInsets.all(8),
+                    margin: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.0),
+                        border: Border.all(color: Colors.black)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Name:",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text(visitorName),
+                        SizedBox(height: screenHeight * 0.01),
+                        Text(
+                          "Date:",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text(visitDate),
+                        SizedBox(height: screenHeight * 0.01),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                nameController.text = visitorName;
+                                visitorDateController.text = visitDate;
+                                phoneNumberController.text = visitorContact;
+
+                                // Switch to the Invite tab
+                                tabController.animateTo(0);
+                              },
+                              child: Text("Reinvite"),
+                            ),
+                            SizedBox(
+                              width: screenWidth * 0.05,
+                            ),
+                            //////////////////////////////////////
+                            ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              VisitorQRPage()));
+                                },
+                                child: Text("View"))
+                          ],
+                        )
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
+            );
+          }
+        },
       ),
     );
   }
@@ -239,6 +328,8 @@ class _VisitorInvitePageState extends State<VisitorInvitePage>
   Widget build(BuildContext context) {
     TextEditingController nameController = TextEditingController();
     TextEditingController phoneNumberController = TextEditingController();
+    TextEditingController visitorDateController =
+        TextEditingController(); // Add this line
 
     return Scaffold(
       appBar: AppBar(
@@ -262,6 +353,7 @@ class _VisitorInvitePageState extends State<VisitorInvitePage>
           InviteHistoryPage(
             nameController: nameController,
             phoneNumberController: phoneNumberController,
+            visitorDateController: visitorDateController,
             tabController: _tabController,
           ),
         ],

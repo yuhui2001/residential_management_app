@@ -53,94 +53,92 @@ class _ProfilePageState extends State<ProfilePage> {
         )),
         automaticallyImplyLeading: false,
       ),
-      body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: EdgeInsets.only(
-                  left: screenWidth * 0.05, top: screenHeight * 0.05),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Name: \n${name}",
-                    textAlign: TextAlign.left,
-                  ),
-                ],
-              ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: EdgeInsets.only(
+                left: screenWidth * 0.05, top: screenHeight * 0.05),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Name: \n${name}",
+                  textAlign: TextAlign.left,
+                ),
+              ],
             ),
-            SizedBox(height: screenHeight * 0.05),
-            Container(
-              padding: EdgeInsets.only(left: screenWidth * 0.05),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Address: \n${address}"),
-                ],
-              ),
+          ),
+          SizedBox(height: screenHeight * 0.05),
+          Container(
+            padding: EdgeInsets.only(left: screenWidth * 0.05),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Address: \n${address}"),
+              ],
             ),
-            Spacer(), // to push the buttons to bottom
+          ),
+          Spacer(), // to push the buttons to bottom
 
-            // buttons at bellow
-            Center(
-              child: Column(
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => BookingHistoryPage()));
-                    },
-                    child: Container(
-                      width: screenWidth * 0.3,
-                      height: 50,
-                      child: Center(
-                        child: Text(
-                          "Booking history",
-                          style: TextStyle(fontSize: 20),
-                        ),
+          // buttons at bellow
+          Center(
+            child: Column(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => BookingHistoryPage()));
+                  },
+                  child: Container(
+                    width: screenWidth * 0.3,
+                    height: 50,
+                    child: Center(
+                      child: Text(
+                        "Booking history",
+                        style: TextStyle(fontSize: 20),
                       ),
                     ),
                   ),
-                  SizedBox(height: screenHeight * 0.05),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => TransactionHistoryPage()));
-                    },
-                    child: Container(
-                      width: screenWidth * 0.3,
-                      height: 50,
-                      child: Center(
-                        child: Text("Transaction history",
-                            style: TextStyle(fontSize: 20)),
-                      ),
+                ),
+                SizedBox(height: screenHeight * 0.05),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => TransactionHistoryPage()));
+                  },
+                  child: Container(
+                    width: screenWidth * 0.3,
+                    height: 50,
+                    child: Center(
+                      child: Text("Transaction history",
+                          style: TextStyle(fontSize: 20)),
                     ),
                   ),
-                  SizedBox(height: screenHeight * 0.05),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => LoginPage()));
-                    },
-                    child: Container(
-                      width: screenWidth * 0.3,
-                      height: 50,
-                      child: Center(
-                        child: Text("Logout", style: TextStyle(fontSize: 20)),
-                      ),
+                ),
+                SizedBox(height: screenHeight * 0.05),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => LoginPage()));
+                  },
+                  child: Container(
+                    width: screenWidth * 0.3,
+                    height: 50,
+                    child: Center(
+                      child: Text("Logout", style: TextStyle(fontSize: 20)),
                     ),
                   ),
-                  SizedBox(height: screenHeight * 0.05),
-                ],
-              ),
+                ),
+                SizedBox(height: screenHeight * 0.05),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
