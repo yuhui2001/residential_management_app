@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:residential_management_app/View/HomePage.dart';
+import 'package:residential_management_app/Controller/VisitorFavoriteController.dart';
 
 class VisitorQRPage extends StatelessWidget {
-  const VisitorQRPage({super.key});
+  final String visitorName;
+  final int visitorContact;
+
+  const VisitorQRPage(
+      {super.key, required this.visitorName, required this.visitorContact});
 
   @override
   Widget build(BuildContext context) {
@@ -33,9 +38,11 @@ class VisitorQRPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Name:\n"),
+                Text("Name:\n$visitorName"),
                 SizedBox(height: screenHeight * 0.05),
-                Text("Phone number:\n"),
+                Text(
+                  "Phone number:\n+60$visitorContact",
+                ),
               ],
             ),
           ),
@@ -49,7 +56,31 @@ class VisitorQRPage extends StatelessWidget {
                     width: screenWidth * 0.3,
                     height: screenHeight * 0.1,
                     child: ElevatedButton(
-                        onPressed: () {}, child: Text("Add to favourite"))),
+                        onPressed: () {
+                          VisitorFavoriteController()
+                              .addFav(visitorName, visitorContact);
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text("Success"),
+                                content: Text("Added into favourite"),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      // Close the dialog when the button is pressed
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text(
+                                      "OK",
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        child: Text("Add to favourite"))),
                 SizedBox(
                   height: screenHeight * 0.05,
                 ),

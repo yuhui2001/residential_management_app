@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:residential_management_app/Controller/VisitorInviteController.dart';
 import 'package:residential_management_app/Controller/VisitorInviteHistoryController.dart';
 import 'package:residential_management_app/Model/UserData.dart';
-import 'package:residential_management_app/View/HomePage.dart';
+import 'package:residential_management_app/Controller/VisitorFavoriteController.dart';
 import 'package:residential_management_app/View/VisitorQRPage.dart';
 
 List<String> titles = <String>['Invite', 'History'];
@@ -39,6 +39,12 @@ class _InvitePageState extends State<InvitePage> {
 
     VisitorInviteController()
         .invite(visitorName, visitorNumber, visitorDate, visitorTime);
+
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => VisitorQRPage(
+                visitorName: visitorName, visitorContact: visitorNumber)));
   }
 
   @override
@@ -155,7 +161,16 @@ class _InvitePageState extends State<InvitePage> {
                     height: 60,
                     width: screenWidth * 0.3,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: ((context) => VisitorFavPage(
+                                      nameController: widget.nameController,
+                                      phoneNumberController:
+                                          widget.phoneNumberController,
+                                    ))));
+                      },
                       child: Text("Favorite List"),
                     ),
                   ),
@@ -170,10 +185,6 @@ class _InvitePageState extends State<InvitePage> {
                     child: ElevatedButton(
                       onPressed: () async {
                         await handleButtonPress();
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => VisitorQRPage()));
                       },
                       child: Text("Create invite"),
                     ),
@@ -241,65 +252,172 @@ class InviteHistoryPage extends StatelessWidget {
 
             return SingleChildScrollView(
               child: Column(
-                children: inviteHistory.map((data) {
-                  String visitorName = data[0];
-                  String visitDate = data[1];
-                  String visitorContact = data[2];
+                children: inviteHistory.map(
+                  (data) {
+                    String visitorName = data[0];
+                    String visitDate = data[1];
+                    String visitorContact = data[2];
 
-                  return Container(
-                    padding: EdgeInsets.all(8),
-                    margin: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8.0),
-                        border: Border.all(color: Colors.black)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Name:",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text(visitorName),
-                        SizedBox(height: screenHeight * 0.01),
-                        Text(
-                          "Date:",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text(visitDate),
-                        SizedBox(height: screenHeight * 0.01),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                nameController.text = visitorName;
-                                visitorDateController.text = visitDate;
-                                phoneNumberController.text = visitorContact;
-
-                                // Switch to the Invite tab
-                                tabController.animateTo(0);
-                              },
-                              child: Text("Reinvite"),
-                            ),
-                            SizedBox(
-                              width: screenWidth * 0.05,
-                            ),
-                            //////////////////////////////////////
-                            ElevatedButton(
+                    return Container(
+                      padding: EdgeInsets.all(8),
+                      margin: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8.0),
+                          border: Border.all(color: Colors.black)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Name:",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(visitorName),
+                          SizedBox(height: screenHeight * 0.01),
+                          Text(
+                            "Date:",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(visitDate),
+                          SizedBox(height: screenHeight * 0.01),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              ElevatedButton(
                                 onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              VisitorQRPage()));
+                                  nameController.text = visitorName;
+                                  phoneNumberController.text = visitorContact;
+
+                                  // Switch to the Invite tab
+                                  tabController.animateTo(0);
                                 },
-                                child: Text("View"))
-                          ],
-                        )
-                      ],
-                    ),
-                  );
-                }).toList(),
+                                child: Text("Reinvite"),
+                              ),
+                              SizedBox(
+                                width: screenWidth * 0.05,
+                              ),
+                              //////////////////////////////////////
+                              ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => VisitorQRPage(
+                                                visitorName: visitorName,
+                                                visitorContact: int.parse(
+                                                    visitorContact))));
+                                  },
+                                  child: Text("View"))
+                            ],
+                          )
+                        ],
+                      ),
+                    );
+                  },
+                ).toList(),
+              ),
+            );
+          }
+        },
+      ),
+    );
+  }
+}
+
+class FavList {
+  final String visitorName;
+  final String visitorNumber;
+
+  FavList({
+    required this.visitorName,
+    required this.visitorNumber,
+  });
+
+  factory FavList.fromMap(Map<String, dynamic> map) {
+    return FavList(
+      visitorName: map['Visitor_Name'],
+      visitorNumber: map['Invitation_Contact'],
+    );
+  }
+}
+
+class VisitorFavPage extends StatelessWidget {
+  final TextEditingController nameController;
+  final TextEditingController phoneNumberController;
+
+  const VisitorFavPage({
+    super.key,
+    required this.nameController,
+    required this.phoneNumberController,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final userData = UserData.user!;
+    final userId = userData.userid;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Favourite List"),
+      ),
+      body: FutureBuilder<List<List<dynamic>>>(
+        future: VisitorFavListController(userId).getFavList(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            List<List<dynamic>> favList = snapshot.data ?? [];
+            return SingleChildScrollView(
+              child: Column(
+                children: favList.map(
+                  (data) {
+                    String visitorName = data[0];
+                    String visitorContact = data[1];
+
+                    return Container(
+                      padding: EdgeInsets.all(8),
+                      margin: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8.0),
+                          border: Border.all(color: Colors.black)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Name:\n$visitorName",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: screenHeight * 0.01),
+                          Text(
+                            "Phone Number:\n$visitorContact",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  nameController.text = visitorName;
+                                  phoneNumberController.text = visitorContact;
+                                  Navigator.pop(context);
+                                },
+                                child: Text("Invite"),
+                              ),
+                              SizedBox(
+                                width: screenWidth * 0.05,
+                              ),
+                              //////////////////////////////////////
+                              ElevatedButton(
+                                  onPressed: () {}, child: Text("Remove"))
+                            ],
+                          )
+                        ],
+                      ),
+                    );
+                  },
+                ).toList(),
               ),
             );
           }
@@ -310,6 +428,14 @@ class InviteHistoryPage extends StatelessWidget {
 }
 
 class VisitorInvitePage extends StatefulWidget {
+  final String? visitorName;
+  final String? visitorContact;
+
+  VisitorInvitePage({
+    this.visitorName,
+    this.visitorContact,
+  });
+
   @override
   _VisitorInvitePageState createState() => _VisitorInvitePageState();
 }
@@ -317,19 +443,23 @@ class VisitorInvitePage extends StatefulWidget {
 class _VisitorInvitePageState extends State<VisitorInvitePage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  late TextEditingController nameController;
+  late TextEditingController phoneNumberController;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: titles.length, vsync: this);
+    nameController = TextEditingController(text: widget.visitorName ?? "");
+    phoneNumberController =
+        TextEditingController(text: widget.visitorContact ?? "");
   }
 
   @override
   Widget build(BuildContext context) {
     TextEditingController nameController = TextEditingController();
     TextEditingController phoneNumberController = TextEditingController();
-    TextEditingController visitorDateController =
-        TextEditingController(); // Add this line
+    TextEditingController visitorDateController = TextEditingController();
 
     return Scaffold(
       appBar: AppBar(
