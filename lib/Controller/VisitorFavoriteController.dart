@@ -59,4 +59,35 @@ class VisitorFavListController {
       return [];
     }
   }
+
+Future<void> removeFromFavList(String visitorName, String visitorContact) async {
+  try {
+    int visitorContactInt = int.parse(visitorContact);
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await collection
+        .where('User_ID', isEqualTo: userId)
+        .where('Visitor_Name', isEqualTo: visitorName)
+        .where('Visitor_Contact', isEqualTo: visitorContactInt)
+        .get();
+
+        print(visitorName);
+        print(visitorContact);
+        print(userId);
+
+    if (querySnapshot.docs.isNotEmpty) {
+      await collection.doc(querySnapshot.docs.first.id).delete();
+    } else {
+      print("No matching document found for removal.");
+    }
+  } catch (e) {
+    print("Error removing from favorite list: $e");
+  }
 }
+
+}
+
+
+
+
+
+
+  
