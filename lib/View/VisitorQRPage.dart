@@ -20,7 +20,7 @@ class VisitorQRPage extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: screenHeight * 0.1),
+          SizedBox(height: screenHeight * 0.05),
           Center(
             child: Container(
               height: screenHeight * 0.3,

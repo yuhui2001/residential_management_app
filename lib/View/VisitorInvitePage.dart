@@ -352,15 +352,39 @@ class FavList {
   }
 }
 
-class VisitorFavPage extends StatelessWidget {
+class VisitorFavPage extends StatefulWidget {
   final TextEditingController nameController;
   final TextEditingController phoneNumberController;
 
   const VisitorFavPage({
-    super.key,
+    Key? key,
     required this.nameController,
     required this.phoneNumberController,
-  });
+  }) : super(key: key);
+
+    @override
+  _VisitorFavPageState createState() => _VisitorFavPageState();
+}
+
+class _VisitorFavPageState extends State<VisitorFavPage> {
+  late List<List<dynamic>> favList;
+
+  @override
+  void initState() {
+    super.initState();
+    favList = [];
+    loadFavList();
+  }
+
+  Future<void> loadFavList() async {
+    final userData = UserData.user!;
+    final userId = userData.userid;
+    final loadedList = await VisitorFavListController(userId).getFavList();
+    setState(() {
+      favList = loadedList;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -411,8 +435,8 @@ class VisitorFavPage extends StatelessWidget {
                             children: [
                               ElevatedButton(
                                 onPressed: () {
-                                  nameController.text = visitorName;
-                                  phoneNumberController.text = visitorContact;
+                                  widget.nameController.text = visitorName;
+                            widget.phoneNumberController.text = visitorContact;
                                   Navigator.pop(context);
                                 },
                                 child: Text("Invite"),
@@ -422,7 +446,18 @@ class VisitorFavPage extends StatelessWidget {
                               ),
                               //////////////////////////////////////
                               ElevatedButton(
-                                  onPressed: () {}, child: Text("Remove"))
+                                onPressed: () async {
+                                  VisitorFavListController(userId).removeFromFavList(visitorName, visitorContact);
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Removed $visitorName from favorites.'),
+                                    ),
+                                  );
+                                  await loadFavList();
+                                },
+                                child: Text("Remove"),
+                              ),
                             ],
                           )
                         ],
@@ -438,6 +473,7 @@ class VisitorFavPage extends StatelessWidget {
     );
   }
 }
+
 
 class VisitorInvitePage extends StatefulWidget {
   final String? visitorName;
