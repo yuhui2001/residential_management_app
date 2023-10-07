@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:residential_management_app/View/AnnouncementPage.dart';
-import 'package:residential_management_app/View/FileReportPage.dart';
-import 'package:residential_management_app/View/HomePage.dart';
-import 'package:residential_management_app/View/HouseCleaningPage.dart';
 import 'package:residential_management_app/View/LoginPage.dart';
-import 'package:residential_management_app/View/ProfilePage.dart';
-import 'package:residential_management_app/View/VisitorInvitePage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:residential_management_app/Controller/CreateUserController.dart';
 
 // if change divice, remember to do flutterfire configure and override directory.
 void main() async {
@@ -15,6 +10,18 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  ////////////////////////////////////////////
+  //// This block of code is just to create a encrypted user, it will not included in the actual app.
+  // const String documentName = "encrypted User";
+  // const String username = "encrypt";
+  // const String password = "20004156";
+  // const String userid = "USR1000";
+  // const String name = "Encrypted User";
+  // const String address = "Big home";
+  // CreateUserController()
+  //     .addUser(documentName, username, password, userid, name, address);
+  /////////////////////////////////////////////
+  ///
   runApp(MyApp());
 }
 

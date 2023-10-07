@@ -72,6 +72,12 @@ class _InvitePageState extends State<InvitePage> {
               controller: widget.nameController,
               decoration: InputDecoration(
                   hintText: "Example: Smartjiran or smartjiran"),
+              validator: (value) {
+                if (value?.isEmpty ?? true) {
+                  return 'Visitor name cannot be empty';
+                }
+                return null;
+              },
             ),
             SizedBox(
               height: screenHeight * 0.01,
@@ -85,6 +91,12 @@ class _InvitePageState extends State<InvitePage> {
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               decoration: InputDecoration(
                   prefixText: "+60", hintText: " Example: 123456789"),
+              validator: (value) {
+                if (value?.isEmpty ?? true) {
+                  return 'Phone number cannot be empty';
+                }
+                return null;
+              },
             ),
 
             Text(""),

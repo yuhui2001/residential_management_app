@@ -1,20 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class UserModel {
+class LoginModel {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<Map<String, dynamic>?> getUserData(String username) async {
+  // Fetch user data along with the salt
+  Future<Map<String, dynamic>?> getUserDataWithSalt(String username) async {
     try {
-      // reference to the "user" collection
+      // Reference to the "user" collection
       CollectionReference users = _firestore.collection('user');
 
-      // Query for a username only
+      // Query for a username and get the salt along with other data
       QuerySnapshot querySnapshot =
           await users.where('username', isEqualTo: username).get();
 
-      // check if any document match the query thing
+      // Check if any document matches the query
       if (querySnapshot.docs.isNotEmpty) {
-        // return the data from the first document found
+        // Return the data from the first document found
         return querySnapshot.docs.first.data() as Map<String, dynamic>;
       } else {
         // no matching username
