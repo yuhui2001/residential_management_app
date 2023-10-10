@@ -69,10 +69,6 @@ class VisitorFavListController {
           .where('Visitor_Contact', isEqualTo: visitorContactInt)
           .get();
 
-      print(visitorName);
-      print(visitorContact);
-      print(userId);
-
       if (querySnapshot.docs.isNotEmpty) {
         await collection.doc(querySnapshot.docs.first.id).delete();
       } else {
