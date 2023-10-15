@@ -267,12 +267,16 @@ class InviteHistoryPage extends StatelessWidget {
                 children: inviteHistory.map(
                   (data) {
                     String visitorName = data[0];
-                    String visitDate = data[1];
-                    String visitorContact = data[2];
+                    DateTime visitDate = DateTime.parse(data[1]);
+                    String formattedDate =
+                        DateFormat('dd MMM yy').format(visitDate);
+                    String invitationTime = data[2];
+                    String visitorContact = data[3];
 
                     return Container(
                       padding: EdgeInsets.all(8),
                       margin: EdgeInsets.all(8),
+                      width: screenWidth * 0.5,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8.0),
                           border: Border.all(color: Colors.black)),
@@ -289,7 +293,11 @@ class InviteHistoryPage extends StatelessWidget {
                             "Date:",
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          Text(visitDate),
+                          Row(children: [
+                            Text(formattedDate),
+                            Text("  "),
+                            Text(invitationTime),
+                          ]),
                           SizedBox(height: screenHeight * 0.01),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -307,7 +315,6 @@ class InviteHistoryPage extends StatelessWidget {
                               SizedBox(
                                 width: screenWidth * 0.05,
                               ),
-                              //////////////////////////////////////
                               ElevatedButton(
                                   onPressed: () {
                                     Navigator.push(
@@ -362,7 +369,7 @@ class VisitorFavPage extends StatefulWidget {
     required this.phoneNumberController,
   }) : super(key: key);
 
-    @override
+  @override
   _VisitorFavPageState createState() => _VisitorFavPageState();
 }
 
@@ -384,7 +391,6 @@ class _VisitorFavPageState extends State<VisitorFavPage> {
       favList = loadedList;
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -436,7 +442,8 @@ class _VisitorFavPageState extends State<VisitorFavPage> {
                               ElevatedButton(
                                 onPressed: () {
                                   widget.nameController.text = visitorName;
-                            widget.phoneNumberController.text = visitorContact;
+                                  widget.phoneNumberController.text =
+                                      visitorContact;
                                   Navigator.pop(context);
                                 },
                                 child: Text("Invite"),
@@ -447,11 +454,14 @@ class _VisitorFavPageState extends State<VisitorFavPage> {
                               //////////////////////////////////////
                               ElevatedButton(
                                 onPressed: () async {
-                                  VisitorFavListController(userId).removeFromFavList(visitorName, visitorContact);
+                                  VisitorFavListController(userId)
+                                      .removeFromFavList(
+                                          visitorName, visitorContact);
 
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text('Removed $visitorName from favorites.'),
+                                      content: Text(
+                                          'Removed $visitorName from favorites.'),
                                     ),
                                   );
                                   await loadFavList();
@@ -473,7 +483,6 @@ class _VisitorFavPageState extends State<VisitorFavPage> {
     );
   }
 }
-
 
 class VisitorInvitePage extends StatefulWidget {
   final String? visitorName;

@@ -19,9 +19,10 @@ class VisitorInviteHistoryController {
       return documents.map((doc) {
         String visitorName = doc['Visitor_Name'];
         String visitorDate = doc['Invitation_Date'];
+        String invitationTime = doc['Invitation_Time'];
         int visitorNumber = doc['Visitor_Contact'];
 
-        return [visitorName, visitorDate, visitorNumber.toString()];
+        return [visitorName, visitorDate, invitationTime, visitorNumber.toString()];
       }).toList();
     } catch (e) {
       print("Error fetching invite history: $e");

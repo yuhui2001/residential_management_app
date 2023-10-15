@@ -77,6 +77,7 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
 
       final facility = dropdownValue;
       final facilityCode = mapFacilityToCode(facility);
+      const description = "";
 
       // Check availability
       bool isAvailable = await BookFacilityController()
@@ -84,8 +85,8 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
 
       if (isAvailable) {
         // Facility is available, proceed with booking
-        await BookFacilityController()
-            .bookFacility(bookingDate, startTime!, endTime!, facilityCode);
+        await BookFacilityController().bookFacility(
+            bookingDate, startTime!, endTime!, facilityCode, description);
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -148,11 +149,12 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
         title: Text("Book a facility page"),
       ),
       body: Padding(
-        padding: EdgeInsets.only(left: screenWidth * 0.01),
+        padding:
+            EdgeInsets.only(left: screenWidth * 0.01, top: screenHeight * 0.01),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Type of facility"),
+            Text("Type of facility\n"),
             /////////
             Container(
               width: screenWidth * 0.5,

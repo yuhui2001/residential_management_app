@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:residential_management_app/View/HomePage.dart';
 import 'package:residential_management_app/Controller/VisitorFavoriteController.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class VisitorQRPage extends StatelessWidget {
   final String visitorName;
@@ -24,11 +25,14 @@ class VisitorQRPage extends StatelessWidget {
           Center(
             child: Container(
               height: screenHeight * 0.3,
-              width: screenWidth * 0.5,
+              width: screenWidth * 0.3,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Colors.black)),
-              child: Text("This is QR"),
+              child: QrImageView(
+                data: 'hello',
+                size: screenWidth * 0.3,
+              ),
             ),
           ),
           //////////////////////////

@@ -51,7 +51,7 @@ class BookFacilityController {
   }
 
   Future bookFacility(DateTime bookingDate, TimeOfDay startTime,
-      TimeOfDay endTime, String facilityID) async {
+      TimeOfDay endTime, String facilityID, String description) async {
     try {
       final userID = userData.userid;
 
@@ -80,7 +80,8 @@ class BookFacilityController {
         ),
         "User_ID": userID,
         "Event_ID": eventID,
-        "Facility_ID": facilityID
+        "Facility_ID": facilityID,
+        "Description": description
       };
 
       await collection.add(postData);

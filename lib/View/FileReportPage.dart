@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:residential_management_app/View/HomePage.dart';
 
 class FileReportPage extends StatelessWidget {
   @override
@@ -46,7 +47,7 @@ class FileReportPage extends StatelessWidget {
                 height: 60,
                 width: screenWidth * 0.3,
                 /////////////////////////
-                
+
                 child: ElevatedButton(
                   onPressed: () {
                     showDialog(
@@ -69,6 +70,10 @@ class FileReportPage extends StatelessWidget {
                                 child: ElevatedButton(
                                   onPressed: () {
                                     Navigator.of(context).pop();
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => HomePage()));
                                   },
                                   child: Text(
                                     "OK",
