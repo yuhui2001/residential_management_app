@@ -6,7 +6,7 @@ class VisitorInviteHistoryController {
   VisitorInviteHistoryController(this.userId);
 
   final collection =
-      FirebaseFirestore.instance.collection("Invited Visitor List");
+      FirebaseFirestore.instance.collection("Invited Visitor List").orderBy("Invitation_ID", descending: true);
 
   Future<List<List<String>>> getInviteHistory() async {
     try {

@@ -307,7 +307,7 @@ class InviteHistoryPage extends StatelessWidget {
                                   nameController.text = visitorName;
                                   phoneNumberController.text = visitorContact;
 
-                                  // Switch to the Invite tab
+                                  // switch to inv tab
                                   tabController.animateTo(0);
                                 },
                                 child: Text("Reinvite"),
