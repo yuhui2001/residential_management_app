@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:residential_management_app/View/LoginPage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'package:residential_management_app/Controller/CreateUserController.dart';
+import 'package:residential_management_app/CreateUser.dart';
 
 // if change divice, remember to do flutterfire configure and override directory.
 void main() async {
@@ -18,7 +18,7 @@ void main() async {
   // const String userid = "USR1000";
   // const String name = "Encrypted User";
   // const String address = "Big home";
-  // CreateUserController()
+  // CreateUser()
   //     .addUser(documentName, username, password, userid, name, address);
   /////////////////////////////////////////////
   ///

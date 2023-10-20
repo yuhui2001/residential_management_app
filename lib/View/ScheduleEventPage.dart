@@ -69,7 +69,7 @@ class _ScheduleEventPageState extends State<ScheduleEventPage> {
               );
             },
           );
-          return; // Don't proceed with booking if end time is before or equal to start time
+          return; // if end time is before or equal to start time then prevent continue
         }
       }
 
@@ -146,164 +146,176 @@ class _ScheduleEventPageState extends State<ScheduleEventPage> {
       appBar: AppBar(
         title: Text("Schedule an event page:"),
       ),
-      body: Padding(
-        padding:
-            EdgeInsets.only(left: screenWidth * 0.01, top: screenHeight * 0.01),
+      body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Type of facility\n"),
-            /////////
-            Container(
-              width: screenWidth * 0.5,
-              height: 60,
-              child: DropdownMenu<String>(
-                initialSelection: list.first,
-                onSelected: (String? value) {
-                  setState(() {
-                    dropdownValue = value!;
-                  });
-                },
-                dropdownMenuEntries: list.map<DropdownMenuEntry<String>>(
-                  (String value) {
-                    return DropdownMenuEntry<String>(
-                        value: value, label: value);
-                  },
-                ).toList(),
-              ),
-            ),
-            /////////
-            Text("Description:\n"),
-            Container(
-              height: screenHeight * 0.15,
-              width: screenWidth * 0.9,
-              child: TextFormField(
-                controller: descriptionController,
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.only(
-                        bottom: screenWidth * 0.15,
-                        top: screenHeight * 0.01,
-                        left: screenWidth * 0.01),
-                    isCollapsed: true,
-                    labelText: "Enter description"),
-              ),
-            ),
-            //////
-            Text("\nDate:\n"),
-            Text(
-              date != null
-                  ? DateFormat('yyyy-MM-dd').format(date!)
-                  : "", // show selected date or nothing if none chosen
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Text(""),
-            ElevatedButton(
-              onPressed: () async {
-                DateTime? newDate = await showDatePicker(
-                  context: context,
-                  initialDate: date ?? DateTime.now(),
-                  firstDate: DateTime.now(),
-                  lastDate: DateTime(2100),
-                );
-
-                if (newDate == null) {
-                  newDate = DateTime.now();
-                }
-
-                setState(() {
-                  date = newDate!; // update the selected date
-                });
-
-                final formattedDate = DateFormat('yyyy-MM-dd').format(newDate);
-                dateController.text = formattedDate;
-              },
-              child: Text("Choose date"),
-            ),
-
-            Text("\nStart time:\n"),
-            Text(
-              startTime != null
-                  ? DateFormat('h:mm a').format(DateTime(
-                      date!.year,
-                      date!.month,
-                      date!.day,
-                      startTime!.hour,
-                      startTime!.minute))
-                  : '',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            ElevatedButton(
-              onPressed: date != null
-                  ? () async {
-                      TimeOfDay? selectedStartTime = await showTimePicker(
+            Padding(
+              padding: EdgeInsets.only(
+                  left: screenWidth * 0.01, top: screenHeight * 0.01),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Type of facility\n"),
+                  /////////
+                  Container(
+                    width: screenWidth * 0.5,
+                    height: 60,
+                    child: DropdownMenu<String>(
+                      initialSelection: list.first,
+                      onSelected: (String? value) {
+                        setState(() {
+                          dropdownValue = value!;
+                        });
+                      },
+                      dropdownMenuEntries: list.map<DropdownMenuEntry<String>>(
+                        (String value) {
+                          return DropdownMenuEntry<String>(
+                              value: value, label: value);
+                        },
+                      ).toList(),
+                    ),
+                  ),
+                  /////////
+                  Text("Description:\n"),
+                  Container(
+                    height: screenHeight * 0.15,
+                    width: screenWidth * 0.9,
+                    child: TextFormField(
+                      controller: descriptionController,
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.only(
+                              bottom: screenWidth * 0.15,
+                              top: screenHeight * 0.01,
+                              left: screenWidth * 0.01),
+                          isCollapsed: true,
+                          labelText: "Enter description"),
+                    ),
+                  ),
+                  //////
+                  Text("\nDate:\n"),
+                  Text(
+                    date != null
+                        ? DateFormat('yyyy-MM-dd').format(date!)
+                        : "", // show selected date or nothing if none chosen
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text(""),
+                  ElevatedButton(
+                    onPressed: () async {
+                      DateTime? newDate = await showDatePicker(
                         context: context,
-                        initialTime: TimeOfDay.now(),
+                        initialDate: date ?? DateTime.now(),
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime(2100),
                       );
 
-                      if (selectedStartTime == null) return;
+                      if (newDate == null) {
+                        newDate = DateTime.now();
+                      }
 
                       setState(() {
-                        startTime = selectedStartTime;
+                        date = newDate!; // update the selected date
                       });
 
-                      final formattedTime =
-                          '${selectedStartTime.hour.toString().padLeft(2, '0')}:${selectedStartTime.minute.toString().padLeft(2, '0')}';
-                      startTimeController.text = formattedTime;
-                    }
-                  : null, // Disable button if date is not chosen
-              child: Text("Choose time"),
-            ),
+                      final formattedDate =
+                          DateFormat('yyyy-MM-dd').format(newDate);
+                      dateController.text = formattedDate;
+                    },
+                    child: Text("Choose date"),
+                  ),
 
-            Text("\nEnd time:\n"),
-            Text(
-              endTime != null
-                  ? DateFormat('h:mm a').format(DateTime(date!.year,
-                      date!.month, date!.day, endTime!.hour, endTime!.minute))
-                  : '',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            ElevatedButton(
-              onPressed: date != null
-                  ? () async {
-                      TimeOfDay? selectedEndTime = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                      );
+                  Text("\nStart time:\n"),
+                  Text(
+                    startTime != null
+                        ? DateFormat('h:mm a').format(DateTime(
+                            date!.year,
+                            date!.month,
+                            date!.day,
+                            startTime!.hour,
+                            startTime!.minute))
+                        : '',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  ElevatedButton(
+                    onPressed: date != null
+                        ? () async {
+                            TimeOfDay? selectedStartTime = await showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.now(),
+                            );
 
-                      if (selectedEndTime == null) return;
+                            if (selectedStartTime == null) return;
 
-                      setState(() {
-                        endTime = selectedEndTime;
-                      });
+                            setState(() {
+                              startTime = selectedStartTime;
+                            });
 
-                      final formattedTime =
-                          '${selectedEndTime.hour.toString().padLeft(2, '0')}:${selectedEndTime.minute.toString().padLeft(2, '0')}';
-                      endTimeController.text = formattedTime;
-                    }
-                  : null, // Disable button if date is not chosen
-              child: Text("Choose time"),
-            ),
+                            final formattedTime =
+                                '${selectedStartTime.hour.toString().padLeft(2, '0')}:${selectedStartTime.minute.toString().padLeft(2, '0')}';
+                            startTimeController.text = formattedTime;
+                          }
+                        : null, // Disable button if date is not chosen
+                    child: Text("Choose time"),
+                  ),
 
-            Spacer(),
+                  Text("\nEnd time:\n"),
+                  Text(
+                    endTime != null
+                        ? DateFormat('h:mm a').format(DateTime(
+                            date!.year,
+                            date!.month,
+                            date!.day,
+                            endTime!.hour,
+                            endTime!.minute))
+                        : '',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  ElevatedButton(
+                    onPressed: date != null
+                        ? () async {
+                            TimeOfDay? selectedEndTime = await showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.now(),
+                            );
 
-            Align(
-              alignment: Alignment.center,
-              child: SizedBox(
-                height: 60,
-                width: screenWidth * 0.3,
-                child: ElevatedButton(
-                  onPressed:
-                      (date != null && startTime != null && endTime != null)
-                          ? () => handleButtonPress()
-                          : null,
-                  child: Text("Book now"),
-                ),
+                            if (selectedEndTime == null) return;
+
+                            setState(() {
+                              endTime = selectedEndTime;
+                            });
+
+                            final formattedTime =
+                                '${selectedEndTime.hour.toString().padLeft(2, '0')}:${selectedEndTime.minute.toString().padLeft(2, '0')}';
+                            endTimeController.text = formattedTime;
+                          }
+                        : null, // Disable button if date is not chosen
+                    child: Text("Choose time"),
+                  ),
+                  SizedBox(
+                    height: screenHeight * 0.1,
+                  ),
+                  Align(
+                    alignment: Alignment.center,
+                    child: SizedBox(
+                      height: 60,
+                      width: screenWidth * 0.3,
+                      child: ElevatedButton(
+                        onPressed: (date != null &&
+                                startTime != null &&
+                                endTime != null)
+                            ? () => handleButtonPress()
+                            : null,
+                        child: Text("Book now"),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: screenHeight * 0.03,
+                  )
+                ],
               ),
             ),
-            SizedBox(
-              height: screenHeight * 0.03,
-            )
           ],
         ),
       ),

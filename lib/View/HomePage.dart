@@ -8,6 +8,7 @@ import 'package:residential_management_app/View/FileReportPage.dart';
 import 'package:residential_management_app/View/ScheduleEventPage.dart';
 import 'package:residential_management_app/View/HouseCleaningPage.dart';
 import 'package:residential_management_app/View/MaintenancePage.dart';
+import 'package:intl/intl.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -44,6 +45,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
+    String currentMonth = new DateFormat('MMMM').format(DateTime.now());
 
     return Scaffold(
       appBar: AppBar(
@@ -54,18 +56,17 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         automaticallyImplyLeading: false,
-      ), // Set the app bar to null to remove it
+      ),
       body: SingleChildScrollView(
         child: Center(
           child: Column(
             children: [
               SizedBox(height: screenHeight * 0.1),
-              // "Current Bill" Text
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Current Bill:",
+                    "$currentMonth bill:",
                     style: TextStyle(fontSize: 24),
                   ),
                   Text(
@@ -111,7 +112,7 @@ class _HomePageState extends State<HomePage> {
 
               SizedBox(height: screenHeight * 0.05),
 
-              // Second row (replaced with GridView)
+              // Second row
               GridView.builder(
                 itemCount: 6,
                 shrinkWrap: true,
@@ -119,10 +120,10 @@ class _HomePageState extends State<HomePage> {
                 padding: EdgeInsets.only(
                     left: screenWidth * 0.05, right: screenWidth * 0.05),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // Number of columns
-                  childAspectRatio: 2.0, // Aspect ratio of each grid item
-                  mainAxisSpacing: 10.0, // Spacing between rows
-                  crossAxisSpacing: 10.0, // Spacing between columns
+                  crossAxisCount: 2,
+                  childAspectRatio: 2.0,
+                  mainAxisSpacing: 10.0,
+                  crossAxisSpacing: 10.0,
                 ),
                 itemBuilder: (BuildContext context, int index) {
                   // Replace the content of this builder with your buttons

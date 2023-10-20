@@ -28,23 +28,39 @@ class InvitePage extends StatefulWidget {
 class _InvitePageState extends State<InvitePage> {
   late DateTime? date;
   TimeOfDay? time;
-  final TextEditingController visitorDateController = TextEditingController();
-  final TextEditingController visitorTimeController = TextEditingController();
+  DateTime currentDate = new DateTime.now();
+  final userData = UserData.user!;
+
+  final TextEditingController arrivalDateController = TextEditingController();
+  final TextEditingController arrivalTimeController = TextEditingController();
+
+  bool isCreateInviteButtonEnabled() {
+    return widget.nameController.text.isNotEmpty &&
+        widget.phoneNumberController.text.isNotEmpty &&
+        arrivalDateController.text.isNotEmpty &&
+        arrivalTimeController.text.isNotEmpty;
+  }
 
   handleButtonPress() {
     final visitorName = widget.nameController.text;
     final int visitorNumber = int.parse(widget.phoneNumberController.text);
-    final String visitorDate = visitorDateController.text;
-    final String visitorTime = visitorTimeController.text;
+    final String inviteDate = DateFormat('yyyy-MM-dd').format(currentDate);
+    final String inviteTime = DateFormat('Hm').format(currentDate);
+    final String arrivalDate = arrivalDateController.text;
+    final String arrivalTime = arrivalTimeController.text;
+    final encryptedVisitorName = VisitorInviteController().encrypt(visitorName);
 
-    VisitorInviteController()
-        .invite(visitorName, visitorNumber, visitorDate, visitorTime);
+    VisitorInviteController().invite(visitorName, visitorNumber, inviteDate,
+        inviteTime, arrivalDate, arrivalTime);
 
     Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => VisitorQRPage(
-                visitorName: visitorName, visitorContact: visitorNumber)));
+                visitorName: visitorName,
+                visitorContact: visitorNumber,
+                ownerAddress: userData.address,
+                encryptedVisitorInfo: encryptedVisitorName.base64)));
   }
 
   @override
@@ -59,50 +75,42 @@ class _InvitePageState extends State<InvitePage> {
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      body: Container(
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         padding: EdgeInsets.symmetric(
           horizontal: screenWidth * 0.02,
           vertical: screenHeight * 0.01,
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("Visitor name: "),
             TextFormField(
               controller: widget.nameController,
               decoration: InputDecoration(
-                  hintText: "Example: Smartjiran or smartjiran"),
-              validator: (value) {
-                if (value?.isEmpty ?? true) {
-                  return 'Visitor name cannot be empty';
-                }
-                return null;
+                hintText: "Example: Smartjiran or smartjiran",
+              ),
+              onChanged: (value) {
+                setState(() {}); // rebuilt ui after input changed
               },
             ),
-            SizedBox(
-              height: screenHeight * 0.01,
-            ),
-
-            /////////////////////
+            SizedBox(height: screenHeight * 0.01),
             Text("Visitor phone number: "),
             TextFormField(
               controller: widget.phoneNumberController,
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               decoration: InputDecoration(
-                  prefixText: "+60", hintText: " Example: 123456789"),
-              validator: (value) {
-                if (value?.isEmpty ?? true) {
-                  return 'Phone number cannot be empty';
-                }
-                return null;
+                prefixText: "+60",
+                hintText: " Example: 123456789",
+              ),
+              onChanged: (value) {
+                setState(() {});
               },
             ),
-
             Text(""),
-
-            ////////////////////
-            Text("Date:\n"),
+            Text("Arrival date:\n"),
             Text(
               date != null
                   ? DateFormat('yyyy-MM-dd').format(date!)
@@ -124,18 +132,16 @@ class _InvitePageState extends State<InvitePage> {
                 }
 
                 setState(() {
-                  date = newDate!; // update the selected date
+                  date = newDate; // update the selected date
                 });
 
                 final formattedDate = '${newDate.toString()}';
-                visitorDateController.text = formattedDate;
+                arrivalDateController.text = formattedDate;
               },
               child: Text("Choose date"),
             ),
             Text(""),
-
-            ////////////////////
-            Text("Time:\n"),
+            Text("Arrival time:\n"),
             Text(
               time != null
                   ? '${time!.hour.toString().padLeft(2, '0')}:${time!.minute.toString().padLeft(2, '0')}\n'
@@ -157,14 +163,13 @@ class _InvitePageState extends State<InvitePage> {
 
                 final formattedTime =
                     '${selectedTime.hour.toString().padLeft(2, '0')}:${selectedTime.minute.toString().padLeft(2, '0')}';
-                visitorTimeController.text = formattedTime;
+                arrivalTimeController.text = formattedTime;
               },
               child: Text("Choose time"),
             ),
-
-            Spacer(),
-
-            /////////////////
+            SizedBox(
+              height: screenHeight * 0.1,
+            ),
             Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -175,13 +180,15 @@ class _InvitePageState extends State<InvitePage> {
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: ((context) => VisitorFavPage(
-                                      nameController: widget.nameController,
-                                      phoneNumberController:
-                                          widget.phoneNumberController,
-                                    ))));
+                          context,
+                          MaterialPageRoute(
+                            builder: ((context) => VisitorFavPage(
+                                  nameController: widget.nameController,
+                                  phoneNumberController:
+                                      widget.phoneNumberController,
+                                )),
+                          ),
+                        );
                       },
                       child: Text("Favorite List"),
                     ),
@@ -189,15 +196,15 @@ class _InvitePageState extends State<InvitePage> {
                   SizedBox(
                     height: screenHeight * 0.03,
                   ),
-
-                  ////////////////////////
                   Container(
                     height: 60,
                     width: screenWidth * 0.3,
                     child: ElevatedButton(
-                      onPressed: () async {
-                        await handleButtonPress();
-                      },
+                      onPressed: isCreateInviteButtonEnabled()
+                          ? () async {
+                              await handleButtonPress();
+                            }
+                          : null,
                       child: Text("Create invite"),
                     ),
                   ),
@@ -217,17 +224,18 @@ class _InvitePageState extends State<InvitePage> {
 class InviteHistory {
   final String visitorName;
   final String visitorNumber;
+  final String encryptedVisitor;
 
-  InviteHistory({
-    required this.visitorName,
-    required this.visitorNumber,
-  });
+  InviteHistory(
+      {required this.visitorName,
+      required this.visitorNumber,
+      required this.encryptedVisitor});
 
   factory InviteHistory.fromMap(Map<String, dynamic> map) {
     return InviteHistory(
-      visitorName: map['Visitor_Name'],
-      visitorNumber: map['Invitation_Contact'],
-    );
+        visitorName: map['Visitor_Name'],
+        visitorNumber: map['Invitation_Contact'],
+        encryptedVisitor: map['Encrypted_Visitor_Info']);
   }
 }
 
@@ -267,11 +275,16 @@ class InviteHistoryPage extends StatelessWidget {
                 children: inviteHistory.map(
                   (data) {
                     String visitorName = data[0];
-                    DateTime visitDate = DateTime.parse(data[1]);
-                    String formattedDate =
-                        DateFormat('dd MMM yy').format(visitDate);
-                    String invitationTime = data[2];
+                    DateTime arrivalDate = DateTime.parse(data[1]);
+                    String formatedArrivalDate =
+                        DateFormat('dd MMM yy').format(arrivalDate);
+                    String arrivalTime = data[2];
                     String visitorContact = data[3];
+                    DateTime invitationDate = DateTime.parse(data[4]);
+                    String formattedInvitationDate =
+                        DateFormat('dd MMM yy').format(invitationDate);
+                    String invitationTime = data[5];
+                    String encryptedVisitor = data[6];
 
                     return Container(
                       padding: EdgeInsets.all(8),
@@ -290,15 +303,30 @@ class InviteHistoryPage extends StatelessWidget {
                           Text(visitorName),
                           SizedBox(height: screenHeight * 0.01),
                           Text(
-                            "Date:",
+                            "Visit date and time:",
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           Row(children: [
-                            Text(formattedDate),
+                            Text(formatedArrivalDate),
+                            Text("  "),
+                            Text(arrivalTime),
+                          ]),
+                          SizedBox(height: screenHeight * 0.01),
+
+                          ///
+                          Text(
+                            "Invite date and time:",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Row(children: [
+                            Text(formattedInvitationDate),
                             Text("  "),
                             Text(invitationTime),
                           ]),
                           SizedBox(height: screenHeight * 0.01),
+
+                          ///
+
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -321,9 +349,14 @@ class InviteHistoryPage extends StatelessWidget {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) => VisitorQRPage(
-                                                visitorName: visitorName,
-                                                visitorContact: int.parse(
-                                                    visitorContact))));
+                                                  visitorName: visitorName,
+                                                  visitorContact:
+                                                      int.parse(visitorContact),
+                                                  ownerAddress:
+                                                      userData.address,
+                                                  encryptedVisitorInfo:
+                                                      encryptedVisitor,
+                                                )));
                                   },
                                   child: Text("View"))
                             ],

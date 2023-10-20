@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:encrypt/encrypt.dart';
 
-class CreateUserController {
+class CreateUser {
   final collection = FirebaseFirestore.instance.collection('user');
   final key = "CreatedByYeeeHui";
 

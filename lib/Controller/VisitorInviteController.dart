@@ -1,20 +1,22 @@
-import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:residential_management_app/Model/UserData.dart';
-import 'package:encrypt/encrypt.dart' as encrypt;
-import 'package:qr_flutter/qr_flutter.dart';
+import 'package:encrypt/encrypt.dart';
 
 class VisitorInviteController {
   final userData = UserData.user!;
   final collection =
       FirebaseFirestore.instance.collection("Invited Visitor List");
 
-  Future invite(
-    String visitorName,
-    int phoneNumber,
-    String invitationDate,
-    String invitationTime,
-  ) async {
+  Encrypted encrypt(String plainText) {
+    const keyString = "CreatedbYyeeehUI";
+    final key = Key.fromUtf8(keyString);
+    final encrypter = Encrypter(AES(key, mode: AESMode.cbc));
+    final initVector = IV.fromUtf8(keyString.substring(0, 16));
+    return encrypter.encrypt(plainText, iv: initVector);
+  }
+
+  Future invite(String visitorName, int phoneNumber, String invitationDate,
+      String invitationTime, String arrivalDate, String arrivalTime) async {
     try {
       QuerySnapshot querySnapshot = await collection.get();
       int documentCount = querySnapshot.docs.length;
@@ -30,6 +32,9 @@ class VisitorInviteController {
         "Invitation_Time": invitationTime,
         "Visitor_Name": visitorName,
         "Visitor_Contact": phoneNumber,
+        "Arrival_Date": arrivalDate,
+        "Arrival_Time": arrivalTime,
+        "Encrypted_Visitor_Info": encrypt(visitorName).base64
       };
 
       await collection.doc(documentName).set(postData);
@@ -41,19 +46,5 @@ class VisitorInviteController {
   // Function to generate a unique identifier
   String generateUniqueIdentifier(String userID, String documentName) {
     return "$userID-$documentName";
-  }
-
-  // Function to encrypt visitor name
-  String encryptVisitorName(String visitorName, String uniqueIdentifier) {
-    final keyString = "CreatedbYyeeehUI"; // Replace with your secret key
-    final key = encrypt.Key.fromUtf8(keyString);
-    final encrypter =
-        encrypt.Encrypter(encrypt.AES(key, mode: encrypt.AESMode.cbc));
-    final initVector = encrypt.IV.fromUtf8(keyString.substring(0, 16));
-
-    final encryptedVisitorName =
-        encrypter.encrypt(visitorName + uniqueIdentifier, iv: initVector);
-    return encryptedVisitorName
-        .base64; // Return the base64-encoded encrypted data
   }
 }

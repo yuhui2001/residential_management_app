@@ -99,6 +99,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: Text(
                         "Booking history",
                         style: TextStyle(fontSize: 20),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),
@@ -116,7 +117,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     height: 50,
                     child: Center(
                       child: Text("Transaction history",
-                          style: TextStyle(fontSize: 20)),
+                          style: TextStyle(fontSize: 20),
+                          textAlign: TextAlign.center),
                     ),
                   ),
                 ),
@@ -130,7 +132,11 @@ class _ProfilePageState extends State<ProfilePage> {
                     width: screenWidth * 0.3,
                     height: 50,
                     child: Center(
-                      child: Text("Logout", style: TextStyle(fontSize: 20)),
+                      child: Text(
+                        "Logout",
+                        style: TextStyle(fontSize: 20),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ),
                 ),

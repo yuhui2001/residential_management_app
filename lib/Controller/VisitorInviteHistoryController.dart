@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class VisitorInviteHistoryController {
@@ -5,8 +7,9 @@ class VisitorInviteHistoryController {
 
   VisitorInviteHistoryController(this.userId);
 
-  final collection =
-      FirebaseFirestore.instance.collection("Invited Visitor List").orderBy("Invitation_ID", descending: true);
+  final collection = FirebaseFirestore.instance
+      .collection("Invited Visitor List")
+      .orderBy("Invitation_ID", descending: true);
 
   Future<List<List<String>>> getInviteHistory() async {
     try {
@@ -18,11 +21,22 @@ class VisitorInviteHistoryController {
 
       return documents.map((doc) {
         String visitorName = doc['Visitor_Name'];
-        String visitorDate = doc['Invitation_Date'];
-        String invitationTime = doc['Invitation_Time'];
+        String arrivalTime = doc['Arrival_Time'];
+        String arrivalDate = doc['Arrival_Date'];
         int visitorNumber = doc['Visitor_Contact'];
+        String invitationTime = doc['Invitation_Time'];
+        String invitationDate = doc['Invitation_Date'];
+        String encryptedUser = doc['Encrypted_Visitor_Info'];
 
-        return [visitorName, visitorDate, invitationTime, visitorNumber.toString()];
+        return [
+          visitorName,
+          arrivalDate,
+          arrivalTime,
+          visitorNumber.toString(),
+          invitationDate,
+          invitationTime,
+          encryptedUser
+        ];
       }).toList();
     } catch (e) {
       print("Error fetching invite history: $e");
