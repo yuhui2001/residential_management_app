@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:interval_time_picker/interval_time_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:residential_management_app/Controller/BookFacilityController.dart';
 
@@ -24,6 +25,10 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
   final TextEditingController dateController = TextEditingController();
   final TextEditingController startTimeController = TextEditingController();
   final TextEditingController endTimeController = TextEditingController();
+  final int _interval = 60;
+  TimeOfDay currentTime = TimeOfDay.now();
+
+  List<String> availableSlots = [];
 
   String mapFacilityToCode(String facility) {
     switch (facility) {
@@ -51,19 +56,18 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
             '${endTime?.hour.toString().padLeft(2, '0')}:${endTime?.minute.toString().padLeft(2, '0')}';
 
         if (endTimeString.compareTo(startTimeString) <= 0) {
-          // Show error dialog
           showDialog(
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: Text("Error"),
-                content: Text("End time must be after start time."),
+                title: const Text("Booking failed"),
+                content: const Text("End time must be after start time."),
                 actions: [
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    child: Text(
+                    child: const Text(
                       "OK",
                     ),
                   ),
@@ -71,8 +75,31 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
               );
             },
           );
-          return; // Don't proceed with booking if end time is before or equal to start time
+          return; // prevent proceed if start time and end time are same
         }
+      }
+
+      if (startTime!.hour < 8 || endTime!.hour > 23) {
+        // catch out of bound
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Booking failed"),
+              content: const Text(
+                  "Selected time is out of bounds. Please choose a time between 8 am and 11 pm."),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("OK"),
+                ),
+              ],
+            );
+          },
+        );
+        return;
       }
 
       final facility = dropdownValue;
@@ -87,18 +114,24 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
         // Facility is available, proceed with booking
         await BookFacilityController().bookFacility(
             bookingDate, startTime!, endTime!, facilityCode, description);
+        // ignore: use_build_context_synchronously
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text("Success"),
-              content: Text("Facility booked"),
+              title: const Text("Success"),
+              content: const Text("Facility booked"),
               actions: [
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) => const BookFacilityPage(),
+                      ),
+                    );
                   },
-                  child: Text(
+                  child: const Text(
                     "OK",
                   ),
                 ),
@@ -107,20 +140,21 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
           },
         );
       } else {
-        // Facility is not available, show a message
+        // facility is not available, show a message
+        // ignore: use_build_context_synchronously
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text("Error"),
-              content:
-                  Text("Facility is not available for the selected time slot."),
+              title: const Text("Booking failed"),
+              content: const Text(
+                  "Facility is not available for the selected time slot."),
               actions: [
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text(
+                  child: const Text(
                     "OK",
                   ),
                 ),
@@ -130,7 +164,27 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
         );
       }
     } catch (e) {
+      // ignore: avoid_print
       print("Error handling button press: $e");
+    }
+  }
+
+  Future<void> getAvailableSlots() async {
+    try {
+      final facilityCode = mapFacilityToCode(dropdownValue);
+      final bookingDate = date!;
+
+      // Call the function from the controller to get available slots
+      List<String> slots = await BookFacilityController()
+          .getAvailableSlots(facilityCode, bookingDate);
+
+      // Set the available slots in the state
+      setState(() {
+        availableSlots = slots;
+      });
+    } catch (e) {
+      // ignore: avoid_print
+      print("Error handling getAvailableSlots: $e");
     }
   }
 
@@ -146,16 +200,17 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Book a facility page"),
+        title: const Text("Book a facility page"),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding:
             EdgeInsets.only(left: screenWidth * 0.01, top: screenHeight * 0.01),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Type of facility\n"),
+            const Text("Type of facility\n"),
             /////////
+            // ignore: sized_box_for_whitespace
             Container(
               width: screenWidth * 0.5,
               height: 60,
@@ -164,6 +219,8 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
                 onSelected: (String? value) {
                   setState(() {
                     dropdownValue = value!;
+                    availableSlots =
+                        []; // Reset available slots when facility changes
                   });
                 },
                 dropdownMenuEntries: list.map<DropdownMenuEntry<String>>(
@@ -175,14 +232,14 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
               ),
             ),
 
-            Text("Date:\n"),
+            const Text("Date:\n"),
             Text(
               date != null
                   ? DateFormat('yyyy-MM-dd').format(date!)
                   : "", // show selected date or nothing if none chosen
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
-            Text(""),
+            const Text(""),
             ElevatedButton(
               onPressed: () async {
                 DateTime? newDate = await showDatePicker(
@@ -192,21 +249,23 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
                   lastDate: DateTime(2100),
                 );
 
-                if (newDate == null) {
-                  newDate = DateTime.now();
-                }
+                newDate ??= DateTime.now();
 
                 setState(() {
                   date = newDate!; // update the selected date
+                  availableSlots =
+                      []; // reset available slots when date changes
                 });
 
                 final formattedDate = DateFormat('yyyy-MM-dd').format(newDate);
                 dateController.text = formattedDate;
+
+                await getAvailableSlots();
               },
-              child: Text("Choose date"),
+              child: const Text("Choose date"),
             ),
 
-            Text("\nStart time:\n"),
+            const Text("\nStart time:\n"),
             Text(
               startTime != null
                   ? DateFormat('h:mm a').format(DateTime(
@@ -216,64 +275,97 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
                       startTime!.hour,
                       startTime!.minute))
                   : '',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             ElevatedButton(
               onPressed: date != null
                   ? () async {
-                      TimeOfDay? selectedStartTime = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                      );
+                      TimeOfDay? selectedStartTime =
+                          await showIntervalTimePicker(
+                              context: context,
+                              initialTime:
+                                  TimeOfDay(hour: currentTime.hour, minute: 0),
+                              interval: _interval);
 
                       if (selectedStartTime == null) return;
 
                       setState(() {
                         startTime = selectedStartTime;
+                        availableSlots =
+                            []; // reset available slots after start time changed
                       });
 
                       final formattedTime =
                           '${selectedStartTime.hour.toString().padLeft(2, '0')}:${selectedStartTime.minute.toString().padLeft(2, '0')}';
                       startTimeController.text = formattedTime;
+
+                      await getAvailableSlots();
                     }
-                  : null, // Disable button if date is not chosen
-              child: Text("Choose time"),
+                  : null, // if date not chosen, this button is disabled
+              child: const Text("Choose time"),
             ),
 
-            Text("\nEnd time:\n"),
+            const Text("\nEnd time:\n"),
             Text(
               endTime != null
                   ? DateFormat('h:mm a').format(DateTime(date!.year,
                       date!.month, date!.day, endTime!.hour, endTime!.minute))
                   : '',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             ElevatedButton(
               onPressed: date != null
                   ? () async {
-                      TimeOfDay? selectedEndTime = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                      );
+                      TimeOfDay? selectedEndTime = await showIntervalTimePicker(
+                          context: context,
+                          initialTime:
+                              TimeOfDay(hour: currentTime.hour, minute: 0),
+                          interval: _interval);
 
                       if (selectedEndTime == null) return;
 
                       setState(() {
                         endTime = selectedEndTime;
+                        availableSlots =
+                            []; // reset available slots after end time changed
                       });
 
                       final formattedTime =
                           '${selectedEndTime.hour.toString().padLeft(2, '0')}:${selectedEndTime.minute.toString().padLeft(2, '0')}';
                       endTimeController.text = formattedTime;
+
+                      await getAvailableSlots();
                     }
-                  : null, // Disable button if date is not chosen
-              child: Text("Choose time"),
+                  : null, // disable button if date is not chosen
+              child: const Text("Choose time"),
             ),
 
-            Spacer(),
+            const Text("\n Available slots:\n"),
+
+            // display available slots
+            if (availableSlots.isNotEmpty)
+              GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 5, childAspectRatio: 2.0),
+                itemCount: availableSlots.length,
+                shrinkWrap: true,
+                itemBuilder: (context, index) => Card(
+                  child: ListTile(
+                    title: Center(
+                        child: Text(
+                      availableSlots[index],
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 13),
+                    )),
+                  ),
+                ),
+              ),
+
+            SizedBox(height: screenHeight * 0.1),
 
             Align(
               alignment: Alignment.center,
+              // ignore: sized_box_for_whitespace
               child: Container(
                 height: 60,
                 width: screenWidth * 0.3,
@@ -282,7 +374,7 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
                       (date != null && startTime != null && endTime != null)
                           ? () => handleButtonPress()
                           : null,
-                  child: Text("Book now"),
+                  child: const Text("Book now"),
                 ),
               ),
             ),
