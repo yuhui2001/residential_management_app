@@ -22,7 +22,7 @@ class VisitorQRPage extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Invitation details"),
+        title: const Text("Invitation details"),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -48,13 +48,21 @@ class VisitorQRPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Name:\n$visitorName"),
+                  const Text("Name:",
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(visitorName),
                   SizedBox(height: screenHeight * 0.05),
-                  Text(
-                    "Phone number:\n+60$visitorContact",
+                  const Text(
+                    "Phone number:",
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
+                  Text("+60$visitorContact"),
                   SizedBox(height: screenHeight * 0.05),
-                  Text("Address to visit:\n$ownerAddress")
+                  const Text(
+                    "Address to visit:",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text(ownerAddress)
                 ],
               ),
             ),
@@ -78,15 +86,15 @@ class VisitorQRPage extends StatelessWidget {
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title: Text("Success"),
-                                content: Text("Added into favourite"),
+                                title: const Text("Success"),
+                                content: const Text("Added into favourite"),
                                 actions: [
                                   TextButton(
                                     onPressed: () {
                                       // Close the dialog when the button is pressed
                                       Navigator.of(context).pop();
                                     },
-                                    child: Text(
+                                    child: const Text(
                                       "OK",
                                     ),
                                   ),
@@ -95,7 +103,7 @@ class VisitorQRPage extends StatelessWidget {
                             },
                           );
                         },
-                        child: Text(
+                        child: const Text(
                           "Add to favourite",
                           textAlign: TextAlign.center,
                         ),
@@ -114,7 +122,7 @@ class VisitorQRPage extends StatelessWidget {
                                 MaterialPageRoute(
                                     builder: (context) => HomePage()));
                           },
-                          child: Text(
+                          child: const Text(
                             "Back to home page",
                             textAlign: TextAlign.center,
                           ))),

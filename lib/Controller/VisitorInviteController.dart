@@ -15,7 +15,7 @@ class VisitorInviteController {
     return encrypter.encrypt(plainText, iv: initVector);
   }
 
-  Future invite(String visitorName, int phoneNumber, String invitationDate,
+  Future invite(String visitorName, int visitorContact, String invitationDate,
       String invitationTime, String arrivalDate, String arrivalTime) async {
     try {
       QuerySnapshot querySnapshot = await collection.get();
@@ -31,10 +31,12 @@ class VisitorInviteController {
         "Invitation_Date": invitationDate,
         "Invitation_Time": invitationTime,
         "Visitor_Name": visitorName,
-        "Visitor_Contact": phoneNumber,
+        "Visitor_Contact": visitorContact,
         "Arrival_Date": arrivalDate,
         "Arrival_Time": arrivalTime,
-        "Encrypted_Visitor_Info": encrypt(visitorName).base64
+        "Encrypted_Visitor_Info": encrypt(
+                "Visitor name: $visitorName \nVisitor contact: $visitorContact \nArrival Date: $arrivalDate \nInvitation date: $invitationDate \nInvitation time: $invitationTime \nInvitor: $userData.name \nInvitor address: $userData.address")
+            .base64
       };
 
       await collection.doc(documentName).set(postData);

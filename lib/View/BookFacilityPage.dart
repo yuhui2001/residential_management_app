@@ -87,7 +87,7 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
             return AlertDialog(
               title: const Text("Booking failed"),
               content: const Text(
-                  "Selected time is out of bounds. Please choose a time between 8 am and 11 pm."),
+                  "The facility operating hour is between 8am to 11pm. Please choose a time between 8 am and 11 pm."),
               actions: [
                 TextButton(
                   onPressed: () {
@@ -106,12 +106,11 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
       final facilityCode = mapFacilityToCode(facility);
       const description = "";
 
-      // Check availability
+      // check availability
       bool isAvailable = await BookFacilityController()
           .checkAvailable(facilityCode, bookingDate, startTime!, endTime!);
 
       if (isAvailable) {
-        // Facility is available, proceed with booking
         await BookFacilityController().bookFacility(
             bookingDate, startTime!, endTime!, facilityCode, description);
         // ignore: use_build_context_synchronously
@@ -174,11 +173,11 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
       final facilityCode = mapFacilityToCode(dropdownValue);
       final bookingDate = date!;
 
-      // Call the function from the controller to get available slots
+      // get available slots
       List<String> slots = await BookFacilityController()
           .getAvailableSlots(facilityCode, bookingDate);
 
-      // Set the available slots in the state
+      // set the available slots in the state
       setState(() {
         availableSlots = slots;
       });
@@ -200,7 +199,7 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Book a facility page"),
+        title: const Text("Book a facility page:"),
       ),
       body: SingleChildScrollView(
         padding:
@@ -220,7 +219,7 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
                   setState(() {
                     dropdownValue = value!;
                     availableSlots =
-                        []; // Reset available slots when facility changes
+                        []; // reset available slots when facility changes
                   });
                 },
                 dropdownMenuEntries: list.map<DropdownMenuEntry<String>>(
@@ -268,7 +267,7 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
             const Text("\nStart time:\n"),
             Text(
               startTime != null
-                  ? DateFormat('h:mm a').format(DateTime(
+                  ? DateFormat('H:mm a').format(DateTime(
                       date!.year,
                       date!.month,
                       date!.day,
@@ -308,7 +307,7 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
             const Text("\nEnd time:\n"),
             Text(
               endTime != null
-                  ? DateFormat('h:mm a').format(DateTime(date!.year,
+                  ? DateFormat('H:mm a').format(DateTime(date!.year,
                       date!.month, date!.day, endTime!.hour, endTime!.minute))
                   : '',
               style: const TextStyle(fontWeight: FontWeight.bold),
@@ -319,7 +318,7 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
                       TimeOfDay? selectedEndTime = await showIntervalTimePicker(
                           context: context,
                           initialTime:
-                              TimeOfDay(hour: currentTime.hour, minute: 0),
+                              TimeOfDay(hour: currentTime.hour + 1, minute: 0),
                           interval: _interval);
 
                       if (selectedEndTime == null) return;
@@ -346,17 +345,16 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
             if (availableSlots.isNotEmpty)
               GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 5, childAspectRatio: 2.0),
+                    crossAxisCount: 5),
                 itemCount: availableSlots.length,
                 shrinkWrap: true,
                 itemBuilder: (context, index) => Card(
                   child: ListTile(
-                    title: Center(
-                        child: Text(
+                    title: Text(
                       availableSlots[index],
+                      style: const TextStyle(fontSize: 10),
                       textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 13),
-                    )),
+                    ),
                   ),
                 ),
               ),

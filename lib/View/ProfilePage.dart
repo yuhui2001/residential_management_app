@@ -62,10 +62,12 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "Name: \n${name}",
+                const Text(
+                  "Name:",
                   textAlign: TextAlign.left,
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
+                Text(name)
               ],
             ),
           ),
@@ -75,7 +77,11 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Address: \n${address}"),
+                const Text(
+                  "Address:",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(address)
               ],
             ),
           ),

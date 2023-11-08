@@ -30,19 +30,19 @@ class BookFacilityController {
           .where('Booking_Date', isEqualTo: Timestamp.fromDate(bookingDate))
           .get();
 
-      List<DocumentSnapshot> overlappingBookings =
-          querySnapshot.docs.where((doc) {
+      // Check if the selected time range overlaps with any existing bookings
+      bool isOverlapping = querySnapshot.docs.any((doc) {
         DateTime docStartTime =
             (doc['Start_Time'] as Timestamp).toDate(); // Change this line
         DateTime docEndTime = (doc['End_Time'] as Timestamp).toDate();
 
-        // Check for overlap
+        // Check for overlap or adjacency
         return !(endDateTime.isBefore(docStartTime) ||
             startDateTime.isAfter(docEndTime));
-      }).toList();
+      });
 
-      // If there are overlapping bookings, return false (not available)
-      return overlappingBookings.isEmpty;
+      // If there is an overlapping booking, return false (not available)
+      return !isOverlapping;
     } catch (e) {
       print("Error fetching data from Firestore: $e");
       // Return false in case of an error
@@ -99,16 +99,16 @@ class BookFacilityController {
         '10:00 AM',
         '11:00 AM',
         '12:00 PM',
-        '01:00 PM',
-        '02:00 PM',
-        '03:00 PM',
-        '04:00 PM',
-        '05:00 PM',
-        '06:00 PM',
-        '07:00 PM',
-        '08:00 PM',
-        '09:00 PM',
-        '10:00 PM'
+        '13:00 PM',
+        '14:00 PM',
+        '15:00 PM',
+        '16:00 PM',
+        '17:00 PM',
+        '18:00 PM',
+        '19:00 PM',
+        '20:00 PM',
+        '21:00 PM',
+        '22:00 PM'
       ];
 
       // Query to get booked slots for the specified facility and date
@@ -143,9 +143,13 @@ class BookFacilityController {
         }
       });
 
-      // Get the available slots by removing booked slots from all slots
-      List<String> availableSlots =
-          allSlots.where((slot) => !bookedSlots.contains(slot)).toList();
+      // get the available slots by removing booked slots from all slots
+      List<String> availableSlots = allSlots
+          .where((slot) =>
+              !bookedSlots.contains(slot) &&
+              !bookedSlots.contains(
+                  allSlots[(allSlots.indexOf(slot) + 1) % allSlots.length]))
+          .toList();
 
       return availableSlots;
     } catch (e) {
