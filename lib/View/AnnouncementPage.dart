@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:residential_management_app/View/HomePage.dart';
 import 'package:residential_management_app/View/ProfilePage.dart';
 import 'package:residential_management_app/Controller/AnnouncementController.dart';
-import 'AnnouncementContentPage.dart';
 
 class AnnouncementPage extends StatefulWidget {
   @override
@@ -29,7 +28,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
               case 2:
                 return ProfilePage();
               default:
-                return AnnouncementPage(); // Default to the first screen
+                return AnnouncementPage();
             }
           },
         ),
@@ -40,7 +39,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
   @override
   void initState() {
     super.initState();
-    selectedType = null; // Set the default filter to null (All)
+    selectedType = null;
   }
 
   @override
@@ -107,42 +106,45 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                   itemCount: filteredAnnouncements.length,
                   itemBuilder: (context, index) {
                     Map<String, dynamic> data = filteredAnnouncements[index];
-                    return Column(
-                      children: [
-                        ListTile(
-                          title: Text('Title: ${data['Announcement_Title']}'),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Type: ${data['Announcement_Type']}'),
-                            ],
-                          ),
-                          trailing: ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      AnnouncementContentPage(),
-                                ),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                    return Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Column(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                                border: Border.all(),
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(8))),
+                            child: ListTile(
+                              title: Text(
+                                '${data['Announcement_Title']}',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 26),
                               ),
-                              fixedSize:
-                                  Size(screenWidth * 0.3, screenHeight * 0.1),
-                            ),
-                            child: Text(
-                              'View',
-                              style: TextStyle(color: Colors.white),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Type: ${data['Announcement_Type']}\n',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                        color: Colors.grey),
+                                  ),
+                                  Text(
+                                    '${data['Announcement_Content']}',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        SizedBox(height: 16), // Adjust spacing as needed
-                      ],
+                          const SizedBox(height: 16),
+                        ],
+                      ),
                     );
                   },
                 ),

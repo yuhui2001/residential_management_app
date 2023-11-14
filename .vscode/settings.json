@@ -2,5 +2,6 @@
     "dart.flutterSdkPath": "C:\\flutter",
     "files.watcherExclude": {
         "**/target": true
-    }
+    },
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

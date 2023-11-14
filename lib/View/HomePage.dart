@@ -9,6 +9,8 @@ import 'package:residential_management_app/View/ScheduleEventPage.dart';
 import 'package:residential_management_app/View/HouseCleaningPage.dart';
 import 'package:residential_management_app/View/MaintenancePage.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:residential_management_app/Controller/PaymentController.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -16,12 +18,53 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
+  final int _selectedIndex = 0;
   Timer? countdownTimer;
+  TextEditingController amountController = TextEditingController();
+
+  Future<void> makePayment() async {
+    try {
+      // Get the payment intent from the server
+      int amount = 10000;
+      if (amountController.text.isNotEmpty) {
+        amount = int.tryParse(amountController.text) ?? 10000;
+      }
+
+      // Fetch Payment Intent from the server
+      Map<String, dynamic> paymentIntent =
+          await PaymentController.createPaymentIntent(amount);
+
+      print('Payment Intent: $paymentIntent');
+
+      // Initialize payment sheet
+
+      await Stripe.instance
+          .initPaymentSheet(
+        paymentSheetParameters: SetupPaymentSheetParameters(
+          style: ThemeMode.dark,
+          merchantDisplayName: 'Smart Jiran',
+          allowsDelayedPaymentMethods: true,
+          paymentIntentClientSecret: paymentIntent[
+              'sk_test_51OBXVlGUVzRz1fshV5NxJop2M4zzP1YLAioVaSdXhPisYU0MnrVSBDF2I36QpqO9ArYWCMG4GYT4mwtFxPqQpdUq00fN3IkNr8'],
+        ),
+      )
+          .then((value) {
+        print('Payment Sheet Initialized Successfully');
+      });
+
+      // Display payment sheet
+      await Stripe.instance.presentPaymentSheet().then((value) {
+        // Handle payment success or failure
+        print('Payment Success');
+      });
+    } catch (e) {
+      print('Error during payment: $e');
+    }
+  }
 
   void _onItemTapped(int index) {
     if (index !=
-        _selectedIndex) // Make the page button will not do anything at that page
+        _selectedIndex) // make the page button will not do anything at that page
     {
       Navigator.push(
         context,
@@ -33,7 +76,7 @@ class _HomePageState extends State<HomePage> {
               case 2:
                 return ProfilePage();
               default:
-                return HomePage(); // Default to the first screen
+                return HomePage();
             }
           },
         ),
@@ -70,45 +113,31 @@ class _HomePageState extends State<HomePage> {
                     style: TextStyle(fontSize: 24),
                   ),
                   Text(
-                    "RM 100",
+                    "RM ${amountController.text.isEmpty ? '100' : amountController.text}",
                     style: TextStyle(fontSize: 20),
-                  ),
+                  )
                 ],
               ),
               Text(""),
               ElevatedButton(
-                  onPressed: () {
-                    // Show the alert dialog using showDialog
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text("Payment"),
-                          content: Text("Hello"),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                // Close the dialog when the button is pressed
-                                Navigator.of(context).pop();
-                              },
-                              child: Text(
-                                "OK",
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                  child: Container(
-                      width: screenWidth * 0.2,
-                      height: 50,
-                      child: Center(
-                        child: Text(
-                          "Pay",
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ))),
+                onPressed: () async {
+                  try {
+                    await makePayment();
+                  } catch (error) {
+                    print('Error during payment button press: $error');
+                  }
+                },
+                child: Container(
+                  width: screenWidth * 0.2,
+                  height: 50,
+                  child: Center(
+                    child: Text(
+                      "Pay",
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                ),
+              ),
 
               SizedBox(height: screenHeight * 0.05),
 
@@ -126,7 +155,6 @@ class _HomePageState extends State<HomePage> {
                   crossAxisSpacing: 10.0,
                 ),
                 itemBuilder: (BuildContext context, int index) {
-                  // Replace the content of this builder with your buttons
                   List<Widget> buttons = [
                     ElevatedButton(
                       onPressed: () {

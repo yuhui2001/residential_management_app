@@ -24,16 +24,16 @@ class BookFacilityController {
         endTime.minute,
       );
 
-      // Query to check for overlapping bookings
+      // query to check for overlapping bookings
       QuerySnapshot querySnapshot = await collection
           .where('Facility_ID', isEqualTo: facilityId)
           .where('Booking_Date', isEqualTo: Timestamp.fromDate(bookingDate))
           .get();
 
-      // Check if the selected time range overlaps with any existing bookings
+      // check if the selected time range overlaps with any existing bookings
       bool isOverlapping = querySnapshot.docs.any((doc) {
         DateTime docStartTime =
-            (doc['Start_Time'] as Timestamp).toDate(); // Change this line
+            (doc['Start_Time'] as Timestamp).toDate();
         DateTime docEndTime = (doc['End_Time'] as Timestamp).toDate();
 
         // Check for overlap or adjacency

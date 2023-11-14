@@ -34,6 +34,8 @@ dependencies:
   qr_flutter: ^4.0.0
   encrypt: ^5.0.0
   interval_time_picker: ^2.0.0+5
+  flutter_stripe: ^9.5.0+1
+  http: ^0.13.5
 
 
   # The following adds the Cupertino Icons font to your application.
