@@ -176,8 +176,8 @@ class _ScheduleEventPageState extends State<ScheduleEventPage> {
                     ),
                   ),
                   /////////
-                  Text("Description:\n"),
-                  Container(
+                  const Text("Description:\n"),
+                  SizedBox(
                     height: screenHeight * 0.15,
                     width: screenWidth * 0.9,
                     child: TextFormField(
@@ -193,14 +193,14 @@ class _ScheduleEventPageState extends State<ScheduleEventPage> {
                     ),
                   ),
                   //////
-                  Text("\nDate:\n"),
+                  const Text("\nDate:\n"),
                   Text(
                     date != null
                         ? DateFormat('yyyy-MM-dd').format(date!)
                         : "", // show selected date or nothing if none chosen
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Text(""),
+                  const Text(""),
                   ElevatedButton(
                     onPressed: () async {
                       DateTime? newDate = await showDatePicker(
@@ -210,9 +210,7 @@ class _ScheduleEventPageState extends State<ScheduleEventPage> {
                         lastDate: DateTime(2100),
                       );
 
-                      if (newDate == null) {
-                        newDate = DateTime.now();
-                      }
+                      newDate ??= DateTime.now();
 
                       setState(() {
                         date = newDate!; // update the selected date
@@ -222,10 +220,10 @@ class _ScheduleEventPageState extends State<ScheduleEventPage> {
                           DateFormat('yyyy-MM-dd').format(newDate);
                       dateController.text = formattedDate;
                     },
-                    child: Text("Choose date"),
+                    child: const Text("Choose date"),
                   ),
 
-                  Text("\nStart time:\n"),
+                  const Text("\nStart time:\n"),
                   Text(
                     startTime != null
                         ? DateFormat('h:mm a').format(DateTime(

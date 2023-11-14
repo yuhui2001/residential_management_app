@@ -187,6 +187,48 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
     }
   }
 
+  Future<void> _showStartTimePicker() async {
+    TimeOfDay? selectedStartTime = await showIntervalTimePicker(
+        context: context,
+        initialTime: TimeOfDay(hour: currentTime.hour, minute: 0),
+        interval: _interval,
+        helpText: "Select start time");
+
+    if (selectedStartTime != null) {
+      setState(() {
+        startTime = selectedStartTime;
+        availableSlots = []; // reset available slots after start time changed
+      });
+
+      final formattedTime =
+          '${selectedStartTime.hour.toString().padLeft(2, '0')}:${selectedStartTime.minute.toString().padLeft(2, '0')}';
+      startTimeController.text = formattedTime;
+
+      await getAvailableSlots();
+    }
+  }
+
+  Future<void> _showEndTimePicker() async {
+    TimeOfDay? selectedEndTime = await showIntervalTimePicker(
+        context: context,
+        initialTime: TimeOfDay(hour: currentTime.hour + 1, minute: 0),
+        interval: _interval,
+        helpText: "Select end time");
+
+    if (selectedEndTime != null) {
+      setState(() {
+        endTime = selectedEndTime;
+        availableSlots = []; // reset available slots after end time changed
+      });
+
+      final formattedTime =
+          '${selectedEndTime.hour.toString().padLeft(2, '0')}:${selectedEndTime.minute.toString().padLeft(2, '0')}';
+      endTimeController.text = formattedTime;
+
+      await getAvailableSlots();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -260,6 +302,8 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
                 dateController.text = formattedDate;
 
                 await getAvailableSlots();
+                await _showStartTimePicker();
+                await _showEndTimePicker();
               },
               child: const Text("Choose date"),
             ),
@@ -277,31 +321,8 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             ElevatedButton(
-              onPressed: date != null
-                  ? () async {
-                      TimeOfDay? selectedStartTime =
-                          await showIntervalTimePicker(
-                              context: context,
-                              initialTime:
-                                  TimeOfDay(hour: currentTime.hour, minute: 0),
-                              interval: _interval);
-
-                      if (selectedStartTime == null) return;
-
-                      setState(() {
-                        startTime = selectedStartTime;
-                        availableSlots =
-                            []; // reset available slots after start time changed
-                      });
-
-                      final formattedTime =
-                          '${selectedStartTime.hour.toString().padLeft(2, '0')}:${selectedStartTime.minute.toString().padLeft(2, '0')}';
-                      startTimeController.text = formattedTime;
-
-                      await getAvailableSlots();
-                    }
-                  : null, // if date not chosen, this button is disabled
-              child: const Text("Choose time"),
+              onPressed: date != null ? _showStartTimePicker : null,
+              child: const Text("Choose start time"),
             ),
 
             const Text("\nEnd time:\n"),
@@ -313,30 +334,8 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             ElevatedButton(
-              onPressed: date != null
-                  ? () async {
-                      TimeOfDay? selectedEndTime = await showIntervalTimePicker(
-                          context: context,
-                          initialTime:
-                              TimeOfDay(hour: currentTime.hour + 1, minute: 0),
-                          interval: _interval);
-
-                      if (selectedEndTime == null) return;
-
-                      setState(() {
-                        endTime = selectedEndTime;
-                        availableSlots =
-                            []; // reset available slots after end time changed
-                      });
-
-                      final formattedTime =
-                          '${selectedEndTime.hour.toString().padLeft(2, '0')}:${selectedEndTime.minute.toString().padLeft(2, '0')}';
-                      endTimeController.text = formattedTime;
-
-                      await getAvailableSlots();
-                    }
-                  : null, // disable button if date is not chosen
-              child: const Text("Choose time"),
+              onPressed: startTime != null ? _showEndTimePicker : null,
+              child: const Text("Choose end time"),
             ),
 
             const Text("\n Available slots:\n"),

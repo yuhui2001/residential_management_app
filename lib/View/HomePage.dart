@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
       }
 
       // Fetch Payment Intent from the server
-      Map<String, dynamic> paymentIntent =
+      Map<String, dynamic>? paymentIntent =
           await PaymentController.createPaymentIntent(amount);
 
       print('Payment Intent: $paymentIntent');
@@ -44,8 +44,7 @@ class _HomePageState extends State<HomePage> {
           style: ThemeMode.dark,
           merchantDisplayName: 'Smart Jiran',
           allowsDelayedPaymentMethods: true,
-          paymentIntentClientSecret: paymentIntent[
-              'sk_test_51OBXVlGUVzRz1fshV5NxJop2M4zzP1YLAioVaSdXhPisYU0MnrVSBDF2I36QpqO9ArYWCMG4GYT4mwtFxPqQpdUq00fN3IkNr8'],
+          paymentIntentClientSecret: paymentIntent['client_secret'],
         ),
       )
           .then((value) {
@@ -56,6 +55,7 @@ class _HomePageState extends State<HomePage> {
       await Stripe.instance.presentPaymentSheet().then((value) {
         // Handle payment success or failure
         print('Payment Success');
+        paymentIntent = null;
       });
     } catch (e) {
       print('Error during payment: $e');
