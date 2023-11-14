@@ -4,7 +4,10 @@ import 'package:residential_management_app/Model/UserData.dart';
 import 'package:residential_management_app/Controller/LoginController.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _LoginPageState createState() => _LoginPageState();
 }
 
@@ -25,15 +28,17 @@ class _LoginPageState extends State<LoginPage> {
 
       if (userData != null) {
         UserData.user = userData;
+        // ignore: use_build_context_synchronously
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => HomePage(),
+            builder: (context) => const HomePage(),
           ),
         );
       } else {
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text("Invalid username or password"),
           ),
         );
@@ -49,75 +54,73 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Form(
         key: _formKey,
-        child: Container(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  "SMART JIRAN",
-                  style: TextStyle(
-                    fontSize: 50.0,
-                    fontWeight: FontWeight.bold,
-                  ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Text(
+                "SMART JIRAN",
+                style: TextStyle(
+                  fontSize: 50.0,
+                  fontWeight: FontWeight.bold,
                 ),
-                SizedBox(height: 20.0),
+              ),
+              const SizedBox(height: 20.0),
 
-                // Username input
-                Container(
-                  width: screenWidth * inputFieldWidthPercentage,
-                  child: TextFormField(
-                    controller: usernameController,
-                    decoration: InputDecoration(
-                      hintText: "Username",
+              // Username input
+              SizedBox(
+                width: screenWidth * inputFieldWidthPercentage,
+                child: TextFormField(
+                  controller: usernameController,
+                  decoration: const InputDecoration(
+                    hintText: "Username",
+                  ),
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return 'Username cannot be empty';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+
+              const SizedBox(height: 20.0),
+
+              // Password input
+              SizedBox(
+                width: screenWidth * inputFieldWidthPercentage,
+                child: TextFormField(
+                  controller: passwordController,
+                  obscureText: isHidden,
+                  decoration: InputDecoration(
+                    suffixIcon: IconButton(
+                      icon: isHidden
+                          ? const Icon(Icons.visibility)
+                          : const Icon(Icons.visibility_off),
+                      onPressed: () {
+                        setState(() {
+                          isHidden = !isHidden; // Toggle visibility
+                        });
+                      },
                     ),
-                    validator: (value) {
-                      if (value?.isEmpty ?? true) {
-                        return 'Username cannot be empty';
-                      }
-                      return null;
-                    },
+                    hintText: "Password",
                   ),
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return 'Password cannot be empty';
+                    }
+                    return null;
+                  },
                 ),
+              ),
+              const SizedBox(height: 20.0),
 
-                SizedBox(height: 20.0),
-
-                // Password input
-                Container(
-                  width: screenWidth * inputFieldWidthPercentage,
-                  child: TextFormField(
-                    controller: passwordController,
-                    obscureText: isHidden,
-                    decoration: InputDecoration(
-                      suffixIcon: IconButton(
-                        icon: isHidden
-                            ? const Icon(Icons.visibility)
-                            : const Icon(Icons.visibility_off),
-                        onPressed: () {
-                          setState(() {
-                            isHidden = !isHidden; // Toggle visibility
-                          });
-                        },
-                      ),
-                      hintText: "Password",
-                    ),
-                    validator: (value) {
-                      if (value?.isEmpty ?? true) {
-                        return 'Password cannot be empty';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                SizedBox(height: 20.0),
-
-                TextButton(
-                  onPressed: handleLoginButtonPress,
-                  child: Text("Login"),
-                ),
-              ],
-            ),
+              TextButton(
+                onPressed: handleLoginButtonPress,
+                child: const Text("Login"),
+              ),
+            ],
           ),
         ),
       ),

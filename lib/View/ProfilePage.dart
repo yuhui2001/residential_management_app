@@ -98,8 +98,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         MaterialPageRoute(
                             builder: (context) => BookingHistoryPage()));
                   },
-                  child: Container(
-                    width: screenWidth * 0.3,
+                  child: const SizedBox(
                     height: 50,
                     child: Center(
                       child: Text(
@@ -118,8 +117,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         MaterialPageRoute(
                             builder: (context) => TransactionHistoryPage()));
                   },
-                  child: Container(
-                    width: screenWidth * 0.3,
+                  child: const SizedBox(
                     height: 50,
                     child: Center(
                       child: Text("Transaction history",
@@ -135,9 +133,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         MaterialPageRoute(builder: (context) => LoginPage()));
                   },
                   child: Container(
-                    width: screenWidth * 0.3,
                     height: 50,
-                    child: Center(
+                    child: const Center(
                       child: Text(
                         "Logout",
                         style: TextStyle(fontSize: 20),

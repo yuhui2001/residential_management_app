@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:residential_management_app/Model/LoginModel.dart';
 import 'package:residential_management_app/Model/UserData.dart';
 import 'package:encrypt/encrypt.dart';

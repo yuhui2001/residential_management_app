@@ -51,7 +51,7 @@ class _HouseCleaningPageState extends State<HouseCleaningPage> {
                   textAlign: TextAlign.center,
                 ),
               ),
-              Text("Type of cleaning service:"),
+              const Text("Type of cleaning service:"),
               DropdownButton<String>(
                 value: dropDownValue,
                 onChanged: (value) {
@@ -124,7 +124,6 @@ class _HouseCleaningPageState extends State<HouseCleaningPage> {
               Column(
                 children: [
                   SizedBox(
-                    width: screenWidth * 0.3,
                     height: 60,
                     child: ElevatedButton(
                       onPressed: () {

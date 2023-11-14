@@ -39,6 +39,7 @@ class VisitorInviteHistoryController {
         ];
       }).toList();
     } catch (e) {
+      // ignore: avoid_print
       print("Error fetching invite history: $e");
       return [];
     }

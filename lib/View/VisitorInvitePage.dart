@@ -22,13 +22,14 @@ class InvitePage extends StatefulWidget {
   }) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _InvitePageState createState() => _InvitePageState();
 }
 
 class _InvitePageState extends State<InvitePage> {
   late DateTime? date;
   TimeOfDay? time;
-  DateTime currentDate = new DateTime.now();
+  DateTime currentDate = DateTime.now();
   final userData = UserData.user!;
 
   final TextEditingController arrivalDateController = TextEditingController();
@@ -85,10 +86,10 @@ class _InvitePageState extends State<InvitePage> {
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Visitor name: "),
+            const Text("Visitor name: "),
             TextFormField(
               controller: widget.nameController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: "Example: Smartjiran or smartjiran",
               ),
               onChanged: (value) {
@@ -96,12 +97,12 @@ class _InvitePageState extends State<InvitePage> {
               },
             ),
             SizedBox(height: screenHeight * 0.01),
-            Text("Visitor phone number: "),
+            const Text("Visitor phone number: "),
             TextFormField(
               controller: widget.phoneNumberController,
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 prefixText: "+60",
                 hintText: " Example: 123456789",
               ),
@@ -109,15 +110,15 @@ class _InvitePageState extends State<InvitePage> {
                 setState(() {});
               },
             ),
-            Text(""),
-            Text("Arrival date:\n"),
+            const Text(""),
+            const Text("Arrival date:\n"),
             Text(
               date != null
                   ? DateFormat('yyyy-MM-dd').format(date!)
                   : "", // show selected date or nothing if none chosen
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
-            Text(""),
+            const Text(""),
             ElevatedButton(
               onPressed: () async {
                 DateTime? newDate = await showDatePicker(
@@ -127,26 +128,24 @@ class _InvitePageState extends State<InvitePage> {
                   lastDate: DateTime(2100),
                 );
 
-                if (newDate == null) {
-                  newDate = DateTime.now();
-                }
+                newDate ??= DateTime.now();
 
                 setState(() {
                   date = newDate; // update the selected date
                 });
 
-                final formattedDate = '${newDate.toString()}';
+                final formattedDate = newDate.toString();
                 arrivalDateController.text = formattedDate;
               },
-              child: Text("Choose date"),
+              child: const Text("Choose date"),
             ),
-            Text(""),
-            Text("Arrival time:\n"),
+            const Text(""),
+            const Text("Arrival time:\n"),
             Text(
               time != null
                   ? '${time!.hour.toString().padLeft(2, '0')}:${time!.minute.toString().padLeft(2, '0')}\n'
                   : '',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -165,7 +164,7 @@ class _InvitePageState extends State<InvitePage> {
                     '${selectedTime.hour.toString().padLeft(2, '0')}:${selectedTime.minute.toString().padLeft(2, '0')}';
                 arrivalTimeController.text = formattedTime;
               },
-              child: Text("Choose time"),
+              child: const Text("Choose time"),
             ),
             SizedBox(
               height: screenHeight * 0.1,
@@ -174,9 +173,8 @@ class _InvitePageState extends State<InvitePage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
+                  SizedBox(
                     height: 60,
-                    width: screenWidth * 0.3,
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.push(
@@ -190,22 +188,21 @@ class _InvitePageState extends State<InvitePage> {
                           ),
                         );
                       },
-                      child: Text("Favorite List"),
+                      child: const Text("Favorite List"),
                     ),
                   ),
                   SizedBox(
                     height: screenHeight * 0.03,
                   ),
-                  Container(
+                  SizedBox(
                     height: 60,
-                    width: screenWidth * 0.3,
                     child: ElevatedButton(
                       onPressed: isCreateInviteButtonEnabled()
                           ? () async {
                               await handleButtonPress();
                             }
                           : null,
-                      child: Text("Create invite"),
+                      child: const Text("Create invite"),
                     ),
                   ),
                   SizedBox(
@@ -264,7 +261,7 @@ class InviteHistoryPage extends StatelessWidget {
         future: VisitorInviteHistoryController(userId).getInviteHistory(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
@@ -287,8 +284,8 @@ class InviteHistoryPage extends StatelessWidget {
                     String encryptedVisitor = data[6];
 
                     return Container(
-                      padding: EdgeInsets.all(8),
-                      margin: EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(8),
+                      margin: const EdgeInsets.all(8),
                       width: screenWidth * 0.5,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8.0),
@@ -296,31 +293,31 @@ class InviteHistoryPage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          const Text(
                             "Name:",
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           Text(visitorName),
                           SizedBox(height: screenHeight * 0.01),
-                          Text(
+                          const Text(
                             "Visit date and time:",
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           Row(children: [
                             Text(formatedArrivalDate),
-                            Text("  "),
+                            const Text("  "),
                             Text(arrivalTime),
                           ]),
                           SizedBox(height: screenHeight * 0.01),
 
                           ///
-                          Text(
+                          const Text(
                             "Invite date and time:",
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           Row(children: [
                             Text(formattedInvitationDate),
-                            Text("  "),
+                            const Text("  "),
                             Text(invitationTime),
                           ]),
                           SizedBox(height: screenHeight * 0.01),
@@ -338,7 +335,7 @@ class InviteHistoryPage extends StatelessWidget {
                                   // switch to inv tab
                                   tabController.animateTo(0);
                                 },
-                                child: Text("Reinvite"),
+                                child: const Text("Reinvite"),
                               ),
                               SizedBox(
                                 width: screenWidth * 0.05,
@@ -358,7 +355,7 @@ class InviteHistoryPage extends StatelessWidget {
                                                       encryptedVisitor,
                                                 )));
                                   },
-                                  child: Text("View"))
+                                  child: const Text("View"))
                             ],
                           )
                         ],
@@ -403,6 +400,7 @@ class VisitorFavPage extends StatefulWidget {
   }) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _VisitorFavPageState createState() => _VisitorFavPageState();
 }
 
@@ -433,13 +431,13 @@ class _VisitorFavPageState extends State<VisitorFavPage> {
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Favourite List"),
+        title: const Text("Favourite List"),
       ),
       body: FutureBuilder<List<List<dynamic>>>(
         future: VisitorFavListController(userId).getFavList(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
@@ -452,8 +450,8 @@ class _VisitorFavPageState extends State<VisitorFavPage> {
                     String visitorContact = data[1];
 
                     return Container(
-                      padding: EdgeInsets.all(8),
-                      margin: EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(8),
+                      margin: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8.0),
                           border: Border.all(color: Colors.black)),
@@ -462,12 +460,12 @@ class _VisitorFavPageState extends State<VisitorFavPage> {
                         children: [
                           Text(
                             "Name:\n$visitorName",
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           SizedBox(height: screenHeight * 0.01),
                           Text(
                             "Phone Number:\n$visitorContact",
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -479,7 +477,7 @@ class _VisitorFavPageState extends State<VisitorFavPage> {
                                       visitorContact;
                                   Navigator.pop(context);
                                 },
-                                child: Text("Invite"),
+                                child: const Text("Invite"),
                               ),
                               SizedBox(
                                 width: screenWidth * 0.05,
@@ -499,7 +497,7 @@ class _VisitorFavPageState extends State<VisitorFavPage> {
                                   );
                                   await loadFavList();
                                 },
-                                child: Text("Remove"),
+                                child: const Text("Remove"),
                               ),
                             ],
                           )
@@ -521,12 +519,14 @@ class VisitorInvitePage extends StatefulWidget {
   final String? visitorName;
   final String? visitorContact;
 
-  VisitorInvitePage({
+  const VisitorInvitePage({
+    super.key,
     this.visitorName,
     this.visitorContact,
   });
 
   @override
+  // ignore: library_private_types_in_public_api
   _VisitorInvitePageState createState() => _VisitorInvitePageState();
 }
 
@@ -553,7 +553,7 @@ class _VisitorInvitePageState extends State<VisitorInvitePage>
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Invite Visitor Page"),
+        title: const Text("Invite Visitor Page"),
         bottom: TabBar(
           controller: _tabController,
           tabs: <Widget>[

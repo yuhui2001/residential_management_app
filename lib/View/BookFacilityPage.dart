@@ -365,7 +365,6 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
               // ignore: sized_box_for_whitespace
               child: Container(
                 height: 60,
-                width: screenWidth * 0.3,
                 child: ElevatedButton(
                   onPressed:
                       (date != null && startTime != null && endTime != null)

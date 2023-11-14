@@ -13,7 +13,10 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:residential_management_app/Controller/PaymentController.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _HomePageState createState() => _HomePageState();
 }
 
@@ -34,6 +37,7 @@ class _HomePageState extends State<HomePage> {
       Map<String, dynamic>? paymentIntent =
           await PaymentController.createPaymentIntent(amount);
 
+      // ignore: avoid_print
       print('Payment Intent: $paymentIntent');
 
       // Initialize payment sheet
@@ -48,6 +52,7 @@ class _HomePageState extends State<HomePage> {
         ),
       )
           .then((value) {
+        // ignore: avoid_print
         print('Payment Sheet Initialized Successfully');
       });
 
@@ -92,7 +97,7 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Center(
+        title: const Center(
           child: Text(
             "Home",
             style: TextStyle(fontSize: 30),
@@ -110,27 +115,28 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Text(
                     "$currentMonth bill:",
-                    style: TextStyle(fontSize: 24),
+                    style: const TextStyle(fontSize: 24),
                   ),
                   Text(
                     "RM ${amountController.text.isEmpty ? '100' : amountController.text}",
-                    style: TextStyle(fontSize: 20),
+                    style: const TextStyle(fontSize: 20),
                   )
                 ],
               ),
-              Text(""),
+              const Text(""),
               ElevatedButton(
                 onPressed: () async {
                   try {
                     await makePayment();
                   } catch (error) {
+                    // ignore: avoid_print
                     print('Error during payment button press: $error');
                   }
                 },
-                child: Container(
+                child: SizedBox(
                   width: screenWidth * 0.2,
                   height: 50,
-                  child: Center(
+                  child: const Center(
                     child: Text(
                       "Pay",
                       style: TextStyle(fontSize: 20),
@@ -145,7 +151,7 @@ class _HomePageState extends State<HomePage> {
               GridView.builder(
                 itemCount: 6,
                 shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 padding: EdgeInsets.only(
                     left: screenWidth * 0.05, right: screenWidth * 0.05),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -163,7 +169,7 @@ class _HomePageState extends State<HomePage> {
                             MaterialPageRoute(
                                 builder: (context) => VisitorInvitePage()));
                       },
-                      child: Column(
+                      child: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
@@ -178,9 +184,10 @@ class _HomePageState extends State<HomePage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => BookFacilityPage()));
+                                builder: (context) =>
+                                    const BookFacilityPage()));
                       },
-                      child: Column(
+                      child: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
@@ -203,7 +210,7 @@ class _HomePageState extends State<HomePage> {
                             MaterialPageRoute(
                                 builder: (context) => FileReportPage()));
                       },
-                      child: Column(
+                      child: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
@@ -223,9 +230,10 @@ class _HomePageState extends State<HomePage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ScheduleEventPage()));
+                                builder: (context) =>
+                                    const ScheduleEventPage()));
                       },
-                      child: Column(
+                      child: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
@@ -246,9 +254,10 @@ class _HomePageState extends State<HomePage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => HouseCleaningPage()));
+                                builder: (context) =>
+                                    const HouseCleaningPage()));
                       },
-                      child: Column(
+                      child: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
@@ -270,9 +279,9 @@ class _HomePageState extends State<HomePage> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    MaintenanceRequestPage()));
+                                    const MaintenanceRequestPage()));
                       },
-                      child: Column(
+                      child: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
@@ -291,7 +300,7 @@ class _HomePageState extends State<HomePage> {
                   if (index < buttons.length) {
                     return buttons[index];
                   }
-                  return SizedBox
+                  return const SizedBox
                       .shrink(); // Return an empty space if index is out of range
                 },
               ),
@@ -331,12 +340,12 @@ class _HomePageState extends State<HomePage> {
                                                   mainAxisSize:
                                                       MainAxisSize.min,
                                                   children: [
-                                                    Text(
+                                                    const Text(
                                                       "\nGuard Called",
                                                       style: TextStyle(
                                                           fontSize: 20),
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                         height:
                                                             20), // Add spacing
                                                     Row(
@@ -350,7 +359,7 @@ class _HomePageState extends State<HomePage> {
                                                                     context)
                                                                 .pop();
                                                           },
-                                                          child: Text(
+                                                          child: const Text(
                                                             "Close",
                                                             style: TextStyle(
                                                                 fontSize: 20),
@@ -369,7 +378,7 @@ class _HomePageState extends State<HomePage> {
                                   );
                                 }
 
-                                startCountdown(); // Start the countdown timer initially
+                                startCountdown(); // start the countdown timer initially
 
                                 return AlertDialog(
                                   title: Text(
@@ -387,7 +396,7 @@ class _HomePageState extends State<HomePage> {
                                         "$secondsRemaining seconds",
                                         style: TextStyle(fontSize: 20),
                                       ),
-                                      SizedBox(height: 20), // Add spacing
+                                      const SizedBox(height: 20), // add spacing
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
@@ -413,8 +422,9 @@ class _HomePageState extends State<HomePage> {
                           },
                         );
                       },
-                      child: Container(
-                          width: screenWidth * 0.4,
+                      style:
+                          ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                      child: const SizedBox(
                           height: 60,
                           child: Center(
                             child: Text(
@@ -422,8 +432,6 @@ class _HomePageState extends State<HomePage> {
                               style: TextStyle(fontSize: 30),
                             ),
                           )),
-                      style:
-                          ElevatedButton.styleFrom(backgroundColor: Colors.red),
                     ),
                     SizedBox(height: screenHeight * 0.1),
                   ],

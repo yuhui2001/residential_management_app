@@ -47,9 +47,8 @@ class FileReportPage extends StatelessWidget {
                   ),
                   SizedBox(height: screenHeight * 0.2),
                   Center(
-                    child: Container(
+                    child: SizedBox(
                       height: 60,
-                      width: screenWidth * 0.3,
                       /////////////////////////
 
                       child: ElevatedButton(
@@ -58,18 +57,17 @@ class FileReportPage extends StatelessWidget {
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
-                                  title: Text(
+                                  title: const Text(
                                     "Report submission",
                                     style: TextStyle(fontSize: 20),
                                   ),
-                                  content: Text(
+                                  content: const Text(
                                     "Submitted",
                                     style: TextStyle(fontSize: 16),
                                   ),
                                   actionsAlignment: MainAxisAlignment.center,
                                   actions: [
-                                    Container(
-                                      width: screenWidth * 0.1,
+                                    SizedBox(
                                       height: 40,
                                       child: ElevatedButton(
                                         onPressed: () {
@@ -80,7 +78,7 @@ class FileReportPage extends StatelessWidget {
                                                   builder: (context) =>
                                                       HomePage()));
                                         },
-                                        child: Text(
+                                        child: const Text(
                                           "OK",
                                           style: TextStyle(fontSize: 16),
                                         ),
@@ -90,7 +88,7 @@ class FileReportPage extends StatelessWidget {
                                 );
                               });
                         },
-                        child: Text("Submit"),
+                        child: const Text("Submit"),
                       ),
                     ),
                   ),

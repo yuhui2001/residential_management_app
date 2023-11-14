@@ -75,8 +75,7 @@ class VisitorQRPage extends StatelessWidget {
             Center(
               child: Column(
                 children: [
-                  Container(
-                      width: screenWidth * 0.3,
+                  SizedBox(
                       height: screenHeight * 0.1,
                       child: ElevatedButton(
                         onPressed: () {
@@ -112,15 +111,14 @@ class VisitorQRPage extends StatelessWidget {
                     height: screenHeight * 0.05,
                   ),
                   /////////////////////////
-                  Container(
-                      width: screenWidth * 0.3,
+                  SizedBox(
                       height: screenHeight * 0.1,
                       child: ElevatedButton(
                           onPressed: () {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => HomePage()));
+                                    builder: (context) => const HomePage()));
                           },
                           child: const Text(
                             "Back to home page",

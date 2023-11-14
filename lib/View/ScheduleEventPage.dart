@@ -297,7 +297,6 @@ class _ScheduleEventPageState extends State<ScheduleEventPage> {
                     alignment: Alignment.center,
                     child: SizedBox(
                       height: 60,
-                      width: screenWidth * 0.3,
                       child: ElevatedButton(
                         onPressed: (date != null &&
                                 startTime != null &&
