@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:residential_management_app/View/AnnouncementPage.dart';
@@ -12,6 +14,8 @@ import 'package:intl/intl.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:residential_management_app/Controller/PaymentController.dart';
 
+DateTime currentDate = DateTime.now();
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -24,13 +28,14 @@ class _HomePageState extends State<HomePage> {
   final int _selectedIndex = 0;
   Timer? countdownTimer;
   TextEditingController amountController = TextEditingController();
+  String formattedCurrentDate = DateFormat('yyyy-MM-dd').format(currentDate);
 
   Future<void> makePayment() async {
     try {
       // Get the payment intent from the server
       int amount = 10000;
       if (amountController.text.isNotEmpty) {
-        amount = int.tryParse(amountController.text) ?? 10000;
+        amount = int.tryParse(amountController.text) ?? 0;
       }
 
       // Fetch Payment Intent from the server
@@ -59,6 +64,10 @@ class _HomePageState extends State<HomePage> {
       // Display payment sheet
       await Stripe.instance.presentPaymentSheet().then((value) {
         // Handle payment success or failure
+        String type = 'Monthly maintenance bill';
+        double formattedAmount = (amount / 100);
+        PaymentController().donePayment(
+            formattedAmount.toString(), formattedCurrentDate, type);
         print('Payment Success');
         paymentIntent = null;
       });
@@ -77,11 +86,11 @@ class _HomePageState extends State<HomePage> {
           builder: (context) {
             switch (index) {
               case 1:
-                return AnnouncementPage();
+                return const AnnouncementPage();
               case 2:
-                return ProfilePage();
+                return const ProfilePage();
               default:
-                return HomePage();
+                return const HomePage();
             }
           },
         ),
@@ -93,7 +102,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-    String currentMonth = new DateFormat('MMMM').format(DateTime.now());
+    String currentMonth = DateFormat('MMMM').format(DateTime.now());
 
     return Scaffold(
       appBar: AppBar(
@@ -322,7 +331,7 @@ class _HomePageState extends State<HomePage> {
                               builder: (context, setState) {
                                 void startCountdown() {
                                   countdownTimer = Timer.periodic(
-                                    Duration(seconds: 1),
+                                    const Duration(seconds: 1),
                                     (timer) {
                                       setState(() {
                                         if (secondsRemaining > 0) {
@@ -381,20 +390,20 @@ class _HomePageState extends State<HomePage> {
                                 startCountdown(); // start the countdown timer initially
 
                                 return AlertDialog(
-                                  title: Text(
+                                  title: const Text(
                                     "Emergency",
                                     style: TextStyle(fontSize: 30),
                                   ),
                                   content: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Text(
+                                      const Text(
                                         "Calling the guard in:\n",
                                         style: TextStyle(fontSize: 20),
                                       ),
                                       Text(
                                         "$secondsRemaining seconds",
-                                        style: TextStyle(fontSize: 20),
+                                        style: const TextStyle(fontSize: 20),
                                       ),
                                       const SizedBox(height: 20), // add spacing
                                       Row(
@@ -407,7 +416,7 @@ class _HomePageState extends State<HomePage> {
                                               countdownTimer
                                                   ?.cancel(); // Cancel the countdown timer
                                             },
-                                            child: Text(
+                                            child: const Text(
                                               "Cancel",
                                               style: TextStyle(fontSize: 20),
                                             ),

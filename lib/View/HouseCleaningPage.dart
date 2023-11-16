@@ -1,5 +1,9 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:intl/intl.dart';
+import 'package:residential_management_app/Controller/PaymentController.dart';
 import 'package:residential_management_app/View/HouseCleaningTermsPage.dart';
 
 const List<String> list = <String>[
@@ -14,6 +18,8 @@ const Map<String, double> prices = {
   'Spring cleaning': 270.00,
 };
 
+DateTime currentDate = DateTime.now();
+
 class HouseCleaningPage extends StatefulWidget {
   const HouseCleaningPage({Key? key}) : super(key: key);
 
@@ -27,6 +33,51 @@ class _HouseCleaningPageState extends State<HouseCleaningPage> {
   TimeOfDay? startTime;
   final TextEditingController dateController = TextEditingController();
   final TextEditingController timeController = TextEditingController();
+  TextEditingController amountController = TextEditingController();
+
+  String formattedCurrentDate = DateFormat('yyyy-MM-dd').format(currentDate);
+
+  Future<void> makePayment() async {
+    try {
+      double servicePrice = prices[dropDownValue] ?? 0.0;
+
+      if (servicePrice <= 0) {
+        // handle invalid service price
+        return;
+      }
+
+      int amountInCents = (servicePrice * 100).toInt();
+
+      // Fetch Payment Intent from the server
+      Map<String, dynamic>? paymentIntent =
+          await PaymentController.createPaymentIntent(amountInCents);
+
+      // Initialize payment sheet
+      await Stripe.instance.initPaymentSheet(
+        paymentSheetParameters: SetupPaymentSheetParameters(
+          style: ThemeMode.dark,
+          merchantDisplayName: 'Smart Jiran',
+          allowsDelayedPaymentMethods: true,
+          paymentIntentClientSecret: paymentIntent['client_secret'],
+        ),
+      );
+
+      // Display payment sheet
+      await Stripe.instance.presentPaymentSheet().then((value) {
+        // Handle payment success or failure
+        String type = 'House cleaning bill: $dropDownValue';
+        PaymentController().donePayment(
+          amountInCents.toString(),
+          formattedCurrentDate,
+          type,
+        );
+        print('Payment Success');
+        paymentIntent = null;
+      });
+    } catch (e) {
+      print('Error during payment: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -127,25 +178,7 @@ class _HouseCleaningPageState extends State<HouseCleaningPage> {
                     height: 60,
                     child: ElevatedButton(
                       onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text("Hello"),
-                              content: const Text("NI HAO MA"),
-                              actions: <Widget>[
-                                Center(
-                                  child: TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text("OK"),
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        );
+                        makePayment();
                       },
                       child: const Text("Book now"),
                     ),

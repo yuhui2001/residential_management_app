@@ -28,7 +28,7 @@ void main() async {
   //     .addUser(documentName, username, password, userid, name, address);
   /////////////////////////////////////////////
   ///
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
