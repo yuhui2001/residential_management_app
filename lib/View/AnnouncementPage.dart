@@ -1,9 +1,13 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:residential_management_app/View/HomePage.dart';
 import 'package:residential_management_app/View/ProfilePage.dart';
 import 'package:residential_management_app/Controller/AnnouncementController.dart';
 
 class AnnouncementPage extends StatefulWidget {
+  const AnnouncementPage({super.key});
+
   @override
   _AnnouncementPageState createState() => _AnnouncementPageState();
 }
@@ -24,11 +28,11 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
           builder: (context) {
             switch (index) {
               case 0:
-                return HomePage();
+                return const HomePage();
               case 2:
                 return ProfilePage();
               default:
-                return AnnouncementPage();
+                return const AnnouncementPage();
             }
           },
         ),
@@ -44,12 +48,9 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       appBar: AppBar(
-        title: Center(
+        title: const Center(
           child: Text(
             "Announcement",
             style: TextStyle(fontSize: 30),
@@ -62,7 +63,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
           future: announcementController.getAnnouncements(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             }
 
             if (snapshot.hasError) {
@@ -84,7 +85,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
               children: [
                 // Dropdown for filtering by type
                 DropdownButton<String>(
-                  hint: Text('Filter by Type'),
+                  hint: const Text('Filter by Type'),
                   value: selectedType,
                   onChanged: (value) {
                     setState(() {

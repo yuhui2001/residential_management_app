@@ -167,7 +167,8 @@ class _HomePageState extends State<HomePage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => VisitorInvitePage()));
+                                builder: (context) =>
+                                    const VisitorInvitePage()));
                       },
                       child: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -278,8 +279,7 @@ class _HomePageState extends State<HomePage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    const MaintenanceRequestPage()));
+                                builder: (context) => const MaintenancePage()));
                       },
                       child: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,

@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:residential_management_app/View/BookingHistoryPage.dart';
 import 'package:residential_management_app/View/HomePage.dart';
@@ -7,12 +9,14 @@ import 'package:residential_management_app/View/TransactionHistoryPage.dart';
 import 'package:residential_management_app/Model/UserData.dart';
 
 class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
+
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  int _selectedIndex = 2;
+  final int _selectedIndex = 2;
 
   void _onItemTapped(int index) {
     if (index !=
@@ -24,9 +28,9 @@ class _ProfilePageState extends State<ProfilePage> {
           builder: (context) {
             switch (index) {
               case 0:
-                return HomePage();
+                return const HomePage();
               case 1:
-                return AnnouncementPage();
+                return const AnnouncementPage();
               default:
                 return ProfilePage();
             }
@@ -46,7 +50,7 @@ class _ProfilePageState extends State<ProfilePage> {
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
-        title: Center(
+        title: const Center(
             child: Text(
           "Profile",
           style: TextStyle(fontSize: 30),
@@ -85,7 +89,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ],
             ),
           ),
-          Spacer(), // to push the buttons to bottom
+          const Spacer(), // to push the buttons to bottom
 
           // buttons at bellow
           Center(
@@ -98,9 +102,10 @@ class _ProfilePageState extends State<ProfilePage> {
                         MaterialPageRoute(
                             builder: (context) => BookingHistoryPage()));
                   },
-                  child: const SizedBox(
+                  child: SizedBox(
+                    width: screenWidth * 0.7,
                     height: 50,
-                    child: Center(
+                    child: const Center(
                       child: Text(
                         "Booking history",
                         style: TextStyle(fontSize: 20),
@@ -117,9 +122,10 @@ class _ProfilePageState extends State<ProfilePage> {
                         MaterialPageRoute(
                             builder: (context) => TransactionHistoryPage()));
                   },
-                  child: const SizedBox(
+                  child: SizedBox(
+                    width: screenWidth * 0.7,
                     height: 50,
-                    child: Center(
+                    child: const Center(
                       child: Text("Transaction history",
                           style: TextStyle(fontSize: 20),
                           textAlign: TextAlign.center),
@@ -129,10 +135,13 @@ class _ProfilePageState extends State<ProfilePage> {
                 SizedBox(height: screenHeight * 0.05),
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => LoginPage()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LoginPage()));
                   },
-                  child: Container(
+                  child: SizedBox(
+                    width: screenWidth * 0.7,
                     height: 50,
                     child: const Center(
                       child: Text(
