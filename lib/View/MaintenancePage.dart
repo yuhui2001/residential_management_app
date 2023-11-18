@@ -26,10 +26,6 @@ class _MaintenanceRequestState extends State<MaintenanceRequest> {
   String formattedCurrentDate = DateFormat('yyyy-MM-dd').format(currentDate);
   final TextEditingController descriptionController = TextEditingController();
 
-  handleButtonPress(){
-    
-  }
-
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -159,9 +155,9 @@ class MaintenanceHistory {
 
   factory MaintenanceHistory.fromMap(Map<String, dynamic> map) {
     return MaintenanceHistory(
-        requestId: map['Visitor_Name'],
-        type: map['Invitation_Contact'],
-        description: map['Encrypted_Visitor_Info'],
+        requestId: map['Maintenance_ID'],
+        type: map['Maintenance_Type'],
+        description: map['Description'],
         requestDate: map['Request_Date'],
         assignedWorker: map['Worker_Name'],
         status: map["Request_Status"],

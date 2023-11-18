@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:interval_time_picker/interval_time_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:residential_management_app/Controller/PaymentController.dart';
 import 'package:residential_management_app/View/HouseCleaningTermsPage.dart';
@@ -34,6 +35,7 @@ class _HouseCleaningPageState extends State<HouseCleaningPage> {
   final TextEditingController dateController = TextEditingController();
   final TextEditingController timeController = TextEditingController();
   TextEditingController amountController = TextEditingController();
+  final int _interval = 60;
 
   String formattedCurrentDate = DateFormat('yyyy-MM-dd').format(currentDate);
 
@@ -102,7 +104,8 @@ class _HouseCleaningPageState extends State<HouseCleaningPage> {
                   textAlign: TextAlign.center,
                 ),
               ),
-              const Text("Type of cleaning service:"),
+              const Text("Type of cleaning service:",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
               DropdownButton<String>(
                 value: dropDownValue,
                 onChanged: (value) {
@@ -120,7 +123,8 @@ class _HouseCleaningPageState extends State<HouseCleaningPage> {
               const SizedBox(
                 height: 20.0,
               ),
-              const Text("\nDate:\n"),
+              const Text("\nDate:\n",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
               Text(
                 date != null
                     ? DateFormat('yyyy-MM-dd').format(date!)
@@ -151,7 +155,8 @@ class _HouseCleaningPageState extends State<HouseCleaningPage> {
                 },
                 child: const Text("Choose date"),
               ),
-              const Text("Time:\n"),
+              const Text("Time:\n",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
               Text(
                 startTime != null
                     ? DateFormat('h:mm a').format(DateTime(
@@ -169,7 +174,8 @@ class _HouseCleaningPageState extends State<HouseCleaningPage> {
               ),
               Text(
                 '\nPrice: RM ${prices[dropDownValue]}\n',
-                style: const TextStyle(fontSize: 20.0),
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
               SizedBox(height: screenHeight * 0.05),
               Column(
@@ -208,9 +214,10 @@ class _HouseCleaningPageState extends State<HouseCleaningPage> {
   }
 
   Future<void> _showTimePicker() async {
-    TimeOfDay? selectedStartTime = await showTimePicker(
+    TimeOfDay? selectedStartTime = await showIntervalTimePicker(
       context: context,
-      initialTime: TimeOfDay.now(),
+      interval: _interval,
+      initialTime: TimeOfDay(hour: currentDate.hour, minute: 0),
     );
 
     if (selectedStartTime == null) return;

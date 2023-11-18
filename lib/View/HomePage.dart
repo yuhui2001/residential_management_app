@@ -124,7 +124,8 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Text(
                     "$currentMonth bill:",
-                    style: const TextStyle(fontSize: 24),
+                    style: const TextStyle(
+                        fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   Text(
                     "RM ${amountController.text.isEmpty ? '100' : amountController.text}",
