@@ -1,19 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:residential_management_app/Model/UserData.dart';
-import 'package:encrypt/encrypt.dart';
+import 'EncryptingController.dart';
 
 class VisitorInviteController {
   final userData = UserData.user!;
   final collection =
       FirebaseFirestore.instance.collection("Invited Visitor List");
-
-  Encrypted encrypt(String plainText) {
-    const keyString = "CreatedbYyeeehUI";
-    final key = Key.fromUtf8(keyString);
-    final encrypter = Encrypter(AES(key, mode: AESMode.cbc));
-    final initVector = IV.fromUtf8(keyString.substring(0, 16));
-    return encrypter.encrypt(plainText, iv: initVector);
-  }
 
   Future invite(String visitorName, int visitorContact, String invitationDate,
       String invitationTime, String arrivalDate, String arrivalTime) async {
@@ -34,7 +26,8 @@ class VisitorInviteController {
         "Visitor_Contact": visitorContact,
         "Arrival_Date": arrivalDate,
         "Arrival_Time": arrivalTime,
-        "Encrypted_Visitor_Info": encrypt(
+        "Encrypted_Visitor_Info": EncryptingController()
+            .encrypt(
                 "Visitor name: $visitorName \nVisitor contact: $visitorContact \nArrival Date: $arrivalDate \nInvitation date: $invitationDate \nInvitation time: $invitationTime \nInvitor: $userData.name \nInvitor address: $userData.address")
             .base64
       };

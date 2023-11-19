@@ -6,6 +6,7 @@ import 'package:interval_time_picker/interval_time_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:residential_management_app/Controller/PaymentController.dart';
 import 'package:residential_management_app/View/HouseCleaningTermsPage.dart';
+import 'package:residential_management_app/View/TransactionHistoryPage.dart';
 
 const List<String> list = <String>[
   'Basic cleaning',
@@ -65,11 +66,11 @@ class _HouseCleaningPageState extends State<HouseCleaningPage> {
       );
 
       // Display payment sheet
-      await Stripe.instance.presentPaymentSheet().then((value) {
+      await Stripe.instance.presentPaymentSheet().then((value) async {
         // Handle payment success or failure
         String type = 'House cleaning bill: $dropDownValue';
-        PaymentController().donePayment(
-          amountInCents.toString(),
+        await PaymentController().donePayment(
+          servicePrice.toString(),
           formattedCurrentDate,
           type,
         );
@@ -183,8 +184,14 @@ class _HouseCleaningPageState extends State<HouseCleaningPage> {
                   SizedBox(
                     height: 60,
                     child: ElevatedButton(
-                      onPressed: () {
-                        makePayment();
+                      onPressed: () async {
+                        await makePayment();
+                        // ignore: use_build_context_synchronously
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const TransactionHistoryPage()));
                       },
                       child: const Text("Book now"),
                     ),

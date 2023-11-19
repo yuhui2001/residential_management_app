@@ -1,4 +1,7 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
+import 'package:interval_time_picker/interval_time_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:residential_management_app/Controller/BookFacilityController.dart';
 
@@ -24,6 +27,8 @@ class _ScheduleEventPageState extends State<ScheduleEventPage> {
   final TextEditingController startTimeController = TextEditingController();
   final TextEditingController endTimeController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
+  final int _interval = 60;
+  TimeOfDay currentTime = TimeOfDay.now();
 
   String mapFacilityToCode(String facility) {
     switch (facility) {
@@ -54,14 +59,14 @@ class _ScheduleEventPageState extends State<ScheduleEventPage> {
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: Text("Error"),
-                content: Text("End time must be after start time."),
+                title: const Text("Error"),
+                content: const Text("End time must be after start time."),
                 actions: [
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    child: Text(
+                    child: const Text(
                       "OK",
                     ),
                   ),
@@ -89,14 +94,14 @@ class _ScheduleEventPageState extends State<ScheduleEventPage> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text("Success"),
-              content: Text("Facility booked"),
+              title: const Text("Success"),
+              content: const Text("Facility booked"),
               actions: [
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text(
+                  child: const Text(
                     "OK",
                   ),
                 ),
@@ -110,15 +115,15 @@ class _ScheduleEventPageState extends State<ScheduleEventPage> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text("Error"),
-              content:
-                  Text("Facility is not available for the selected time slot."),
+              title: const Text("Error"),
+              content: const Text(
+                  "Facility is not available for the selected time slot."),
               actions: [
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text(
+                  child: const Text(
                     "OK",
                   ),
                 ),
@@ -130,6 +135,62 @@ class _ScheduleEventPageState extends State<ScheduleEventPage> {
     } catch (e) {
       print("Error handling button press: $e");
     }
+  }
+
+  Future<void> _showStartTimePicker() async {
+    TimeOfDay? selectedStartTime = await showIntervalTimePicker(
+      context: context,
+      interval: _interval,
+      initialTime: TimeOfDay(hour: currentTime.hour, minute: 0),
+      helpText: "Select start time",
+    );
+
+    if (selectedStartTime == null) return;
+
+    setState(() {
+      startTime = selectedStartTime;
+    });
+
+    final formattedTime =
+        '${selectedStartTime.hour.toString().padLeft(2, '0')}:${selectedStartTime.minute.toString().padLeft(2, '0')}';
+    startTimeController.text = formattedTime;
+  }
+
+  Future<void> _showEndTimePicker() async {
+    TimeOfDay? selectedEndTime = await showIntervalTimePicker(
+      context: context,
+      interval: _interval,
+      initialTime: TimeOfDay(hour: currentTime.hour + 1, minute: 0),
+      helpText: "Select end time",
+    );
+
+    if (selectedEndTime == null) return;
+
+    setState(() {
+      endTime = selectedEndTime;
+    });
+
+    final formattedTime =
+        '${selectedEndTime.hour.toString().padLeft(2, '0')}:${selectedEndTime.minute.toString().padLeft(2, '0')}';
+    endTimeController.text = formattedTime;
+  }
+
+  Future<void> _showDatePicker() async {
+    DateTime? newDate = await showDatePicker(
+      context: context,
+      initialDate: date ?? DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+    );
+
+    newDate ??= DateTime.now();
+
+    setState(() {
+      date = newDate!; // update the selected date
+    });
+
+    final formattedDate = DateFormat('yyyy-MM-dd').format(newDate);
+    dateController.text = formattedDate;
   }
 
   @override
@@ -144,7 +205,7 @@ class _ScheduleEventPageState extends State<ScheduleEventPage> {
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Schedule an event page:"),
+        title: const Text("Schedule an event page:"),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -155,9 +216,9 @@ class _ScheduleEventPageState extends State<ScheduleEventPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Type of facility\n"),
+                  const Text("Type of facility\n"),
                   /////////
-                  Container(
+                  SizedBox(
                     width: screenWidth * 0.5,
                     height: 60,
                     child: DropdownMenu<String>(
@@ -183,7 +244,7 @@ class _ScheduleEventPageState extends State<ScheduleEventPage> {
                     child: TextFormField(
                       controller: descriptionController,
                       decoration: InputDecoration(
-                          border: OutlineInputBorder(),
+                          border: const OutlineInputBorder(),
                           contentPadding: EdgeInsets.only(
                               bottom: screenWidth * 0.15,
                               top: screenHeight * 0.01,
@@ -203,22 +264,9 @@ class _ScheduleEventPageState extends State<ScheduleEventPage> {
                   const Text(""),
                   ElevatedButton(
                     onPressed: () async {
-                      DateTime? newDate = await showDatePicker(
-                        context: context,
-                        initialDate: date ?? DateTime.now(),
-                        firstDate: DateTime.now(),
-                        lastDate: DateTime(2100),
-                      );
-
-                      newDate ??= DateTime.now();
-
-                      setState(() {
-                        date = newDate!; // update the selected date
-                      });
-
-                      final formattedDate =
-                          DateFormat('yyyy-MM-dd').format(newDate);
-                      dateController.text = formattedDate;
+                      await _showDatePicker();
+                      await _showStartTimePicker();
+                      _showEndTimePicker();
                     },
                     child: const Text("Choose date"),
                   ),
@@ -233,31 +281,19 @@ class _ScheduleEventPageState extends State<ScheduleEventPage> {
                             startTime!.hour,
                             startTime!.minute))
                         : '',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   ElevatedButton(
                     onPressed: date != null
                         ? () async {
-                            TimeOfDay? selectedStartTime = await showTimePicker(
-                              context: context,
-                              initialTime: TimeOfDay.now(),
-                            );
-
-                            if (selectedStartTime == null) return;
-
-                            setState(() {
-                              startTime = selectedStartTime;
-                            });
-
-                            final formattedTime =
-                                '${selectedStartTime.hour.toString().padLeft(2, '0')}:${selectedStartTime.minute.toString().padLeft(2, '0')}';
-                            startTimeController.text = formattedTime;
+                            await _showStartTimePicker();
+                            _showEndTimePicker();
                           }
                         : null, // Disable button if date is not chosen
-                    child: Text("Choose time"),
+                    child: const Text("Choose time"),
                   ),
 
-                  Text("\nEnd time:\n"),
+                  const Text("\nEnd time:\n"),
                   Text(
                     endTime != null
                         ? DateFormat('h:mm a').format(DateTime(
@@ -267,28 +303,15 @@ class _ScheduleEventPageState extends State<ScheduleEventPage> {
                             endTime!.hour,
                             endTime!.minute))
                         : '',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   ElevatedButton(
                     onPressed: date != null
                         ? () async {
-                            TimeOfDay? selectedEndTime = await showTimePicker(
-                              context: context,
-                              initialTime: TimeOfDay.now(),
-                            );
-
-                            if (selectedEndTime == null) return;
-
-                            setState(() {
-                              endTime = selectedEndTime;
-                            });
-
-                            final formattedTime =
-                                '${selectedEndTime.hour.toString().padLeft(2, '0')}:${selectedEndTime.minute.toString().padLeft(2, '0')}';
-                            endTimeController.text = formattedTime;
+                            _showEndTimePicker();
                           }
                         : null, // Disable button if date is not chosen
-                    child: Text("Choose time"),
+                    child: const Text("Choose time"),
                   ),
                   SizedBox(
                     height: screenHeight * 0.1,
@@ -303,7 +326,7 @@ class _ScheduleEventPageState extends State<ScheduleEventPage> {
                                 endTime != null)
                             ? () => handleButtonPress()
                             : null,
-                        child: Text("Book now"),
+                        child: const Text("Book now"),
                       ),
                     ),
                   ),

@@ -6,6 +6,7 @@ import 'package:residential_management_app/Controller/VisitorInviteHistoryContro
 import 'package:residential_management_app/Model/UserData.dart';
 import 'package:residential_management_app/Controller/VisitorFavoriteController.dart';
 import 'package:residential_management_app/View/VisitorQRPage.dart';
+import 'package:residential_management_app/Controller/EncryptingController.dart';
 
 List<String> titles = <String>['Invite', 'History'];
 
@@ -49,7 +50,7 @@ class _InvitePageState extends State<InvitePage> {
     final String inviteTime = DateFormat('Hm').format(currentDate);
     final String arrivalDate = arrivalDateController.text;
     final String arrivalTime = arrivalTimeController.text;
-    final encryptedVisitorName = VisitorInviteController().encrypt(visitorName);
+    final encryptedVisitorName = EncryptingController().encrypt(visitorName);
 
     VisitorInviteController().invite(visitorName, visitorNumber, inviteDate,
         inviteTime, arrivalDate, arrivalTime);

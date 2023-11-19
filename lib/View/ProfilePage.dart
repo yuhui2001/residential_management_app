@@ -69,7 +69,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 const Text(
                   "Name:",
                   textAlign: TextAlign.left,
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
                 Text(name)
               ],
@@ -83,7 +83,7 @@ class _ProfilePageState extends State<ProfilePage> {
               children: [
                 const Text(
                   "Address:",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
                 Text(address)
               ],
@@ -120,7 +120,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => TransactionHistoryPage()));
+                            builder: (context) =>
+                                const TransactionHistoryPage()));
                   },
                   child: SizedBox(
                     width: screenWidth * 0.7,

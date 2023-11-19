@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:residential_management_app/View/AnnouncementPage.dart';
 import 'package:residential_management_app/View/BookFacilityPage.dart';
 import 'package:residential_management_app/View/ProfilePage.dart';
+import 'package:residential_management_app/View/TransactionHistoryPage.dart';
 import 'package:residential_management_app/View/VisitorInvitePage.dart';
 import 'package:residential_management_app/View/FileReportPage.dart';
 import 'package:residential_management_app/View/ScheduleEventPage.dart';
@@ -62,11 +63,11 @@ class _HomePageState extends State<HomePage> {
       });
 
       // Display payment sheet
-      await Stripe.instance.presentPaymentSheet().then((value) {
+      await Stripe.instance.presentPaymentSheet().then((value) async {
         // Handle payment success or failure
         String type = 'Monthly maintenance bill';
         double formattedAmount = (amount / 100);
-        PaymentController().donePayment(
+        await PaymentController().donePayment(
             formattedAmount.toString(), formattedCurrentDate, type);
         print('Payment Success');
         paymentIntent = null;
@@ -142,6 +143,12 @@ class _HomePageState extends State<HomePage> {
                     // ignore: avoid_print
                     print('Error during payment button press: $error');
                   }
+                  // ignore: use_build_context_synchronously
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              const TransactionHistoryPage()));
                 },
                 child: SizedBox(
                   width: screenWidth * 0.2,

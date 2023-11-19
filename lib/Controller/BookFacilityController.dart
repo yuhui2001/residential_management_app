@@ -1,8 +1,8 @@
 // ignore_for_file: avoid_print
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:residential_management_app/Model/UserData.dart';
+import 'EncryptingController.dart';
 
 class BookFacilityController {
   final userData = UserData.user!;
@@ -34,8 +34,7 @@ class BookFacilityController {
 
       // check if the selected time range overlaps with any existing bookings
       bool isOverlapping = querySnapshot.docs.any((doc) {
-        DateTime docStartTime =
-            (doc['Start_Time'] as Timestamp).toDate();
+        DateTime docStartTime = (doc['Start_Time'] as Timestamp).toDate();
         DateTime docEndTime = (doc['End_Time'] as Timestamp).toDate();
 
         // Check for overlap or adjacency
@@ -136,7 +135,7 @@ class BookFacilityController {
             int.parse(slot.split(':')[1].split(' ')[0]),
           );
 
-          DateTime slotEndTime = slotStartTime.add(Duration(hours: 1));
+          DateTime slotEndTime = slotStartTime.add(const Duration(hours: 1));
 
           if (!(endDateTime.isBefore(slotStartTime) ||
               startDateTime.isAfter(slotEndTime))) {
