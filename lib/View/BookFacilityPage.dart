@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:interval_time_picker/interval_time_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:residential_management_app/Controller/BookFacilityController.dart';
+import 'BookingHistoryContentPage.dart';
+import 'package:residential_management_app/Model/UserData.dart';
+import 'package:residential_management_app/Controller/EncryptingController.dart';
 
 const List<String> list = <String>[
   'Badminton Court A',
@@ -9,6 +12,7 @@ const List<String> list = <String>[
   'Basketball Court',
   'Tennis Court'
 ];
+final userData = UserData.user!;
 
 class BookFacilityPage extends StatefulWidget {
   const BookFacilityPage({Key? key}) : super(key: key);
@@ -27,6 +31,8 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
   final TextEditingController endTimeController = TextEditingController();
   final int _interval = 60;
   TimeOfDay currentTime = TimeOfDay.now();
+  final userName = userData.name;
+  final String userId = userData.userid;
 
   List<String> availableSlots = [];
 
@@ -111,8 +117,8 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
           .checkAvailable(facilityCode, bookingDate, startTime!, endTime!);
 
       if (isAvailable) {
-        await BookFacilityController().bookFacility(
-            bookingDate, startTime!, endTime!, facilityCode, description);
+        await BookFacilityController().bookFacility(bookingDate, startTime!,
+            endTime!, facilityCode, dropdownValue, description);
         // ignore: use_build_context_synchronously
         showDialog(
           context: context,
@@ -126,7 +132,16 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
                     Navigator.of(context).pop();
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
-                        builder: (context) => const BookFacilityPage(),
+                        builder: (context) => BookingHistoryContentPage(
+                            bookingUser: userName,
+                            startTime: startTimeController.text,
+                            endTime: endTimeController.text,
+                            facilityName: dropdownValue,
+                            userBookedDate: bookingDate.toString(),
+                            encryptedBookingInfo: EncryptingController()
+                                .encrypt(
+                                    "Booking user: $userName \nBooking userId: $userId \nBooking date: $bookingDate \nStart time: $startTime \nEnd time: $endTime Facility Id: $facilityCode")
+                                .base64),
                       ),
                     );
                   },
@@ -302,8 +317,6 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
                 dateController.text = formattedDate;
 
                 await getAvailableSlots();
-                await _showStartTimePicker();
-                await _showEndTimePicker();
               },
               child: const Text("Choose date"),
             ),
@@ -321,7 +334,12 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             ElevatedButton(
-              onPressed: date != null ? _showStartTimePicker : null,
+              onPressed: date != null
+                  ? () async {
+                      await _showStartTimePicker();
+                      await _showEndTimePicker();
+                    }
+                  : null,
               child: const Text("Choose start time"),
             ),
 
@@ -340,22 +358,51 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
 
             const Text("\n Available slots:\n"),
 
-            // display available slots
+            // display available slots as buttons
             if (availableSlots.isNotEmpty)
-              GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 5),
-                itemCount: availableSlots.length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) => Card(
-                  child: ListTile(
-                    title: Text(
-                      availableSlots[index],
-                      style: const TextStyle(fontSize: 10),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
+              Wrap(
+                spacing: 8.0,
+                runSpacing: 8.0,
+                children: availableSlots
+                    .map(
+                      (slot) => ElevatedButton(
+                        onPressed: () async {
+                          try {
+                            final List<String> timeParts = slot.split(" ");
+                            if (timeParts.length == 2) {
+                              final List<String> hourMinute =
+                                  timeParts[0].split(":");
+                              final int hour = int.parse(hourMinute[0]);
+                              final int minute = int.parse(hourMinute[1]);
+                              final String period = timeParts[1].toUpperCase();
+
+                              if ((period == 'AM' || period == 'PM') &&
+                                  (hour >= 1 && hour <= 12) &&
+                                  (minute >= 0 && minute <= 59)) {
+                                setState(() {
+                                  startTime = TimeOfDay(
+                                      hour: period == 'PM' ? hour + 12 : hour,
+                                      minute: minute);
+                                  availableSlots = []; // reset available slots
+                                });
+                              } else {
+                                print("Invalid time format");
+                              }
+                            } else {
+                              print("Invalid time format");
+                            }
+                          } catch (e) {
+                            print("Error parsing time: $e");
+                          }
+                          await getAvailableSlots();
+                        },
+                        child: Text(
+                          slot,
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      ),
+                    )
+                    .toList(),
               ),
 
             SizedBox(height: screenHeight * 0.1),

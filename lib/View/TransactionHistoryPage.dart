@@ -109,6 +109,5 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
         },
       ),
     );
-    ;
   }
 }

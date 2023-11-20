@@ -51,10 +51,17 @@ class BookFacilityController {
     }
   }
 
-  Future<void> bookFacility(DateTime bookingDate, TimeOfDay startTime,
-      TimeOfDay endTime, String facilityID, String description) async {
+  Future<void> bookFacility(
+    DateTime bookingDate,
+    TimeOfDay startTime,
+    TimeOfDay endTime,
+    String facilityID,
+    String facilityName,
+    String description,
+  ) async {
     try {
       final userID = userData.userid;
+      final userName = userData.name;
 
       QuerySnapshot querySnapshot = await collection.get();
       int documentCount = querySnapshot.docs.length;
@@ -82,7 +89,12 @@ class BookFacilityController {
         "User_ID": userID,
         "Event_ID": eventID,
         "Facility_ID": facilityID,
-        "Description": description
+        "Facility_Name": facilityName,
+        "Description": description,
+        "Encrypted_Info": EncryptingController()
+            .encrypt(
+                "Booking user: $userName \nBooking userId: $userID \nBooking date: $bookingDate \nStart time: $startTime \nEnd time: $endTime Facility Id: $facilityID")
+            .base64
       };
 
       await collection.doc(documentName).set(postData);

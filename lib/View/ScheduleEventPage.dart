@@ -4,6 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:interval_time_picker/interval_time_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:residential_management_app/Controller/BookFacilityController.dart';
+import 'package:residential_management_app/Controller/EncryptingController.dart';
+import 'package:residential_management_app/Model/UserData.dart';
+import 'package:residential_management_app/View/BookingHistoryContentPage.dart';
+
+final userData = UserData.user!;
 
 const List<String> list = <String>[
   'Event hall A',
@@ -29,6 +34,8 @@ class _ScheduleEventPageState extends State<ScheduleEventPage> {
   final TextEditingController descriptionController = TextEditingController();
   final int _interval = 60;
   TimeOfDay currentTime = TimeOfDay.now();
+  final userName = userData.name;
+  final String userId = userData.userid;
 
   String mapFacilityToCode(String facility) {
     switch (facility) {
@@ -44,6 +51,9 @@ class _ScheduleEventPageState extends State<ScheduleEventPage> {
   }
 
   Future<void> handleButtonPress() async {
+    final facility = dropdownValue;
+    final facilityCode = mapFacilityToCode(facility);
+    final description = descriptionController.text;
     try {
       final DateTime bookingDate = DateTime.parse(dateController.text);
 
@@ -78,18 +88,14 @@ class _ScheduleEventPageState extends State<ScheduleEventPage> {
         }
       }
 
-      final facility = dropdownValue;
-      final facilityCode = mapFacilityToCode(facility);
-      final description = descriptionController.text;
-
       // Check availability
       bool isAvailable = await BookFacilityController()
           .checkAvailable(facilityCode, bookingDate, startTime!, endTime!);
 
       if (isAvailable) {
         // Facility is available, proceed with booking
-        await BookFacilityController().bookFacility(
-            bookingDate, startTime!, endTime!, facilityCode, description);
+        await BookFacilityController().bookFacility(bookingDate, startTime!,
+            endTime!, facilityCode, dropdownValue, description);
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -100,6 +106,20 @@ class _ScheduleEventPageState extends State<ScheduleEventPage> {
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) => BookingHistoryContentPage(
+                            bookingUser: userName,
+                            startTime: startTimeController.text,
+                            endTime: endTimeController.text,
+                            facilityName: dropdownValue,
+                            userBookedDate: bookingDate.toString(),
+                            encryptedBookingInfo: EncryptingController()
+                                .encrypt(
+                                    "Booking user: $userName \nBooking userId: $userId \nBooking date: $bookingDate \nStart time: $startTime \nEnd time: $endTime Facility Id: $facilityCode")
+                                .base64),
+                      ),
+                    );
                   },
                   child: const Text(
                     "OK",
