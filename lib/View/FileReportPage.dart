@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:residential_management_app/View/HomePage.dart';
+import 'package:residential_management_app/Controller/FileReportController.dart';
 
 class FileReportPage extends StatelessWidget {
+  const FileReportPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
+    final TextEditingController titleController = TextEditingController();
+    final TextEditingController descriptionController = TextEditingController();
     return Scaffold(
       appBar: AppBar(
-        title: Text("File a report page"),
+        title: const Text("File a report page"),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -19,30 +24,32 @@ class FileReportPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: screenHeight * 0.02),
-                  Text("Title:\n"),
-                  Container(
+                  const Text("Title:\n"),
+                  SizedBox(
                     height: 60,
                     width: screenWidth * 0.95,
                     child: TextFormField(
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: "Enter title"),
+                      controller: titleController,
                     ),
                   ),
-                  Text(""),
-                  Text("Description:\n"),
-                  Container(
+                  const Text(""),
+                  const Text("Description:\n"),
+                  SizedBox(
                     height: screenHeight * 0.4,
                     width: screenWidth * 0.95,
                     child: TextFormField(
                       decoration: InputDecoration(
-                          border: OutlineInputBorder(),
+                          border: const OutlineInputBorder(),
                           contentPadding: EdgeInsets.only(
                               bottom: screenWidth * 0.3,
                               top: screenHeight * 0.01,
                               left: screenWidth * 0.01),
                           isCollapsed: true,
                           labelText: "Enter description"),
+                      controller: descriptionController,
                     ),
                   ),
                   SizedBox(height: screenHeight * 0.2),
@@ -52,7 +59,10 @@ class FileReportPage extends StatelessWidget {
                       /////////////////////////
 
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
+                          await FileReportController().fileReport(
+                              titleController.text, descriptionController.text);
+                          // ignore: use_build_context_synchronously
                           showDialog(
                               context: context,
                               builder: (BuildContext context) {
@@ -76,7 +86,7 @@ class FileReportPage extends StatelessWidget {
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      HomePage()));
+                                                      const HomePage()));
                                         },
                                         child: const Text(
                                           "OK",

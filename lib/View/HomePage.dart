@@ -232,11 +232,7 @@ class _HomePageState extends State<HomePage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "File a",
-                            style: TextStyle(fontSize: 20),
-                          ),
-                          Text(
-                            "Report",
+                            "File a\n Report",
                             style: TextStyle(fontSize: 20),
                           ),
                         ],

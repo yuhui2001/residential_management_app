@@ -6,7 +6,7 @@ import 'package:residential_management_app/Controller/VisitorInviteHistoryContro
 import 'package:residential_management_app/Model/UserData.dart';
 import 'package:residential_management_app/Controller/VisitorFavoriteController.dart';
 import 'package:residential_management_app/View/VisitorQRPage.dart';
-import 'package:residential_management_app/Controller/EncryptingController.dart';
+import 'package:residential_management_app/Model/EncryptingModel.dart';
 
 List<String> titles = <String>['Invite', 'History'];
 

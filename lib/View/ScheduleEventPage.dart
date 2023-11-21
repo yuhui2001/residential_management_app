@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:interval_time_picker/interval_time_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:residential_management_app/Controller/BookFacilityController.dart';
-import 'package:residential_management_app/Controller/EncryptingController.dart';
+import 'package:residential_management_app/Model/EncryptingModel.dart';
 import 'package:residential_management_app/Model/UserData.dart';
 import 'package:residential_management_app/View/BookingHistoryContentPage.dart';
 

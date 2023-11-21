@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:residential_management_app/Controller/BookFacilityController.dart';
 import 'BookingHistoryContentPage.dart';
 import 'package:residential_management_app/Model/UserData.dart';
-import 'package:residential_management_app/Controller/EncryptingController.dart';
+import 'package:residential_management_app/Model/EncryptingModel.dart';
 
 const List<String> list = <String>[
   'Badminton Court A',

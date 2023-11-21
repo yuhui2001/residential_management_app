@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:residential_management_app/Model/UserData.dart';
-import 'EncryptingController.dart';
+import '../Model/EncryptingModel.dart';
 
 class VisitorInviteController {
   final userData = UserData.user!;
