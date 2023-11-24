@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, avoid_print
 
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
@@ -76,6 +76,11 @@ class _HouseCleaningPageState extends State<HouseCleaningPage> {
         );
         print('Payment Success');
         paymentIntent = null;
+        // ignore: use_build_context_synchronously
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const TransactionHistoryPage()));
       });
     } catch (e) {
       print('Error during payment: $e');
@@ -97,102 +102,111 @@ class _HouseCleaningPageState extends State<HouseCleaningPage> {
             children: [
               SizedBox(height: screenHeight * 0.05),
               SizedBox(
-                height: screenHeight * 0.2,
+                height: screenHeight * 0.15,
                 width: screenWidth * 0.7,
                 child: const Text(
-                  "House cleaning booking service sdn bhd",
+                  "House cleaning booking service",
                   style: TextStyle(fontSize: 36),
                   textAlign: TextAlign.center,
                 ),
               ),
-              const Text("Type of cleaning service:",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-              DropdownButton<String>(
-                value: dropDownValue,
-                onChanged: (value) {
-                  setState(() {
-                    dropDownValue = value!;
-                  });
-                },
-                items: list.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-              const SizedBox(
-                height: 20.0,
-              ),
-              const Text("\nDate:\n",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-              Text(
-                date != null
-                    ? DateFormat('yyyy-MM-dd').format(date!)
-                    : "", // show selected date or nothing if none chosen
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const Text(""),
-              ElevatedButton(
-                onPressed: () async {
-                  DateTime? newDate = await showDatePicker(
-                    context: context,
-                    initialDate: date ?? DateTime.now(),
-                    firstDate: DateTime.now(),
-                    lastDate: DateTime(2100),
-                  );
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: EdgeInsets.only(left: screenWidth * 0.01),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text("Type of cleaning service:",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18)),
+                      DropdownButton<String>(
+                        value: dropDownValue,
+                        onChanged: (value) {
+                          setState(() {
+                            dropDownValue = value!;
+                          });
+                        },
+                        items:
+                            list.map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                      const SizedBox(
+                        height: 20.0,
+                      ),
+                      const Text("\nDate:\n",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18)),
+                      Text(
+                        date != null
+                            ? DateFormat('yyyy-MM-dd').format(date!)
+                            : "", // show selected date or nothing if none chosen
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const Text(""),
+                      ElevatedButton(
+                        onPressed: () async {
+                          DateTime? newDate = await showDatePicker(
+                            context: context,
+                            initialDate: date ?? DateTime.now(),
+                            firstDate: DateTime.now(),
+                            lastDate: DateTime(2100),
+                          );
 
-                  newDate ??= DateTime.now();
+                          newDate ??= DateTime.now();
 
-                  setState(() {
-                    date = newDate!; // update the selected date
-                  });
+                          setState(() {
+                            date = newDate!; // update the selected date
+                          });
 
-                  final formattedDate =
-                      DateFormat('yyyy-MM-dd').format(newDate);
-                  dateController.text = formattedDate;
+                          final formattedDate =
+                              DateFormat('yyyy-MM-dd').format(newDate);
+                          dateController.text = formattedDate;
 
-                  await _showTimePicker();
-                },
-                child: const Text("Choose date"),
+                          await _showTimePicker();
+                        },
+                        child: const Text("Choose date"),
+                      ),
+                      const Text("Time:\n",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18)),
+                      Text(
+                        startTime != null
+                            ? DateFormat('h:mm a').format(DateTime(
+                                date!.year,
+                                date!.month,
+                                date!.day,
+                                startTime!.hour,
+                                startTime!.minute))
+                            : '',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      ElevatedButton(
+                        onPressed: date != null ? _showTimePicker : null,
+                        child: const Text("Choose time"),
+                      ),
+                      Text(
+                        '\nPrice: RM ${prices[dropDownValue]}\n',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              const Text("Time:\n",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-              Text(
-                startTime != null
-                    ? DateFormat('h:mm a').format(DateTime(
-                        date!.year,
-                        date!.month,
-                        date!.day,
-                        startTime!.hour,
-                        startTime!.minute))
-                    : '',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              ElevatedButton(
-                onPressed: date != null ? _showTimePicker : null,
-                child: const Text("Choose time"),
-              ),
-              Text(
-                '\nPrice: RM ${prices[dropDownValue]}\n',
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-              SizedBox(height: screenHeight * 0.05),
               Column(
                 children: [
                   SizedBox(
                     height: 60,
                     child: ElevatedButton(
-                      onPressed: () async {
-                        await makePayment();
-                        // ignore: use_build_context_synchronously
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const TransactionHistoryPage()));
-                      },
+                      onPressed: (date != null && startTime != null)
+                          ? () async => await makePayment()
+                          : null,
                       child: const Text("Book now"),
                     ),
                   ),
@@ -228,6 +242,37 @@ class _HouseCleaningPageState extends State<HouseCleaningPage> {
     );
 
     if (selectedStartTime == null) return;
+
+    final DateTime chosenDateTime = DateTime(
+      currentDate.year,
+      currentDate.month,
+      currentDate.day,
+      selectedStartTime.hour,
+      selectedStartTime.minute,
+    );
+
+    if (chosenDateTime.hour < 8 || chosenDateTime.hour > 17) {
+      // ignore: use_build_context_synchronously
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Invalid Time"),
+            content:
+                const Text("The operation hours are between 8 am and 5 pm."),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
 
     setState(() {
       startTime = selectedStartTime;

@@ -85,29 +85,6 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
         }
       }
 
-      if (startTime!.hour < 8 || endTime!.hour > 23) {
-        // catch out of bound
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text("Booking failed"),
-              content: const Text(
-                  "The facility operating hour is between 8am to 11pm. Please choose a time between 8 am and 11 pm."),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text("OK"),
-                ),
-              ],
-            );
-          },
-        );
-        return;
-      }
-
       final facility = dropdownValue;
       final facilityCode = mapFacilityToCode(facility);
       const description = "";
@@ -204,12 +181,37 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
 
   Future<void> _showStartTimePicker() async {
     TimeOfDay? selectedStartTime = await showIntervalTimePicker(
-        context: context,
-        initialTime: TimeOfDay(hour: currentTime.hour, minute: 0),
-        interval: _interval,
-        helpText: "Select start time");
+      context: context,
+      initialTime: const TimeOfDay(hour: 8, minute: 0),
+      interval: _interval,
+      helpText: "Select start time",
+    );
 
     if (selectedStartTime != null) {
+      if (selectedStartTime.hour < 8 || selectedStartTime.hour > 23) {
+        // Show an alert for invalid start time
+        // ignore: use_build_context_synchronously
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Invalid Start Time"),
+              content: const Text(
+                  "Please choose a start time between 8 am and 11 pm."),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("OK"),
+                ),
+              ],
+            );
+          },
+        );
+        return;
+      }
+
       setState(() {
         startTime = selectedStartTime;
         availableSlots = []; // reset available slots after start time changed
@@ -256,7 +258,7 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Book a facility page:"),
+        title: const Text("Book a facility page"),
       ),
       body: SingleChildScrollView(
         padding:

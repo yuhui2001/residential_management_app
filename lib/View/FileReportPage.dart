@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:residential_management_app/View/HomePage.dart';
 import 'package:residential_management_app/Controller/FileReportController.dart';
 
+final TextEditingController titleController = TextEditingController();
+final TextEditingController descriptionController = TextEditingController();
+
 class FileReportPage extends StatelessWidget {
   const FileReportPage({super.key});
 
@@ -9,8 +12,6 @@ class FileReportPage extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-    final TextEditingController titleController = TextEditingController();
-    final TextEditingController descriptionController = TextEditingController();
     return Scaffold(
       appBar: AppBar(
         title: const Text("File a report page"),
@@ -53,11 +54,10 @@ class FileReportPage extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: screenHeight * 0.2),
+                  /////////////////////////
                   Center(
                     child: SizedBox(
                       height: 60,
-                      /////////////////////////
-
                       child: ElevatedButton(
                         onPressed: () async {
                           await FileReportController().fileReport(
@@ -75,22 +75,25 @@ class FileReportPage extends StatelessWidget {
                                     "Submitted",
                                     style: TextStyle(fontSize: 16),
                                   ),
-                                  actionsAlignment: MainAxisAlignment.center,
                                   actions: [
-                                    SizedBox(
-                                      height: 40,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                          Navigator.push(
+                                    Align(
+                                      alignment: Alignment.bottomRight,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            Navigator.push(
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      const HomePage()));
-                                        },
-                                        child: const Text(
-                                          "OK",
-                                          style: TextStyle(fontSize: 16),
+                                                      const HomePage()),
+                                            );
+                                          },
+                                          child: const Text(
+                                            "OK",
+                                            style: TextStyle(fontSize: 16),
+                                          ),
                                         ),
                                       ),
                                     ),

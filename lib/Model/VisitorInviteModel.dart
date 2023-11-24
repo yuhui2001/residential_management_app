@@ -22,6 +22,7 @@ class VisitorInviteModel {
       }
     } catch (e) {
       // Handle any errors that occur during the fetch
+      // ignore: avoid_print
       print("Error fetching user data: $e");
       return null;
     }

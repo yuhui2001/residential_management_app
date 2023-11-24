@@ -465,7 +465,7 @@ class _VisitorFavPageState extends State<VisitorFavPage> {
                           ),
                           SizedBox(height: screenHeight * 0.01),
                           Text(
-                            "Phone Number:\n$visitorContact",
+                            "Phone Number:\n+60$visitorContact",
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           Row(

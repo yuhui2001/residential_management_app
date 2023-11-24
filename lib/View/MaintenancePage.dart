@@ -94,15 +94,18 @@ class _MaintenanceRequestState extends State<MaintenanceRequest> {
                           ),
                           actionsAlignment: MainAxisAlignment.center,
                           actions: [
-                            SizedBox(
-                              height: 40,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text(
-                                  "OK",
-                                  style: TextStyle(fontSize: 16),
+                            Align(
+                              alignment: Alignment.bottomRight,
+                              child: SizedBox(
+                                height: 40,
+                                child: TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text(
+                                    "OK",
+                                    style: TextStyle(fontSize: 16),
+                                  ),
                                 ),
                               ),
                             ),

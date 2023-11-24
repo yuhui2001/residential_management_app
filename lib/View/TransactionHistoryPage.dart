@@ -88,7 +88,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
 
                           const Text("Payment Amount:",
                               style: TextStyle(fontWeight: FontWeight.bold)),
-                          Text(paymentAmount),
+                          Text("RM $paymentAmount"),
                           SizedBox(height: screenHeight * 0.01),
 
                           ///

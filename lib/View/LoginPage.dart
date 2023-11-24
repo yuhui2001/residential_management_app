@@ -60,11 +60,12 @@ class _LoginPageState extends State<LoginPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Text(
-                "SMART JIRAN",
+                "SMART \nJIRAN",
                 style: TextStyle(
                   fontSize: 50.0,
                   fontWeight: FontWeight.bold,
                 ),
+                textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20.0),
 

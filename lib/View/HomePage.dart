@@ -71,6 +71,11 @@ class _HomePageState extends State<HomePage> {
             formattedAmount.toString(), formattedCurrentDate, type);
         print('Payment Success');
         paymentIntent = null;
+        // ignore: use_build_context_synchronously
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const TransactionHistoryPage()));
       });
     } catch (e) {
       print('Error during payment: $e');
@@ -144,11 +149,6 @@ class _HomePageState extends State<HomePage> {
                     print('Error during payment button press: $error');
                   }
                   // ignore: use_build_context_synchronously
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              const TransactionHistoryPage()));
                 },
                 child: SizedBox(
                   width: screenWidth * 0.2,
@@ -234,6 +234,7 @@ class _HomePageState extends State<HomePage> {
                           Text(
                             "File a\n Report",
                             style: TextStyle(fontSize: 20),
+                            textAlign: TextAlign.center,
                           ),
                         ],
                       ),
@@ -354,7 +355,7 @@ class _HomePageState extends State<HomePage> {
                                                       MainAxisSize.min,
                                                   children: [
                                                     const Text(
-                                                      "\nGuard Called",
+                                                      "\nGuard called",
                                                       style: TextStyle(
                                                           fontSize: 20),
                                                     ),
