@@ -26,10 +26,10 @@ class LoginController {
         if (decryptedPassword == enteredPassword) {
           // Correct password, login success
           final user = UserData(
-            address: userData['address'],
-            name: userData['name'],
-            userid: userData['userid'],
-          );
+              address: userData['address'],
+              name: userData['name'],
+              userid: userData['userid'],
+              monthlyPaymentStatus: userData['monthlyPaymentStatus']);
           return user;
         } else {
           print("Wrong password");

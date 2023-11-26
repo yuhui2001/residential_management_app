@@ -14,7 +14,9 @@ import 'package:residential_management_app/View/MaintenancePage.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:residential_management_app/Controller/PaymentController.dart';
+import 'package:residential_management_app/Model/UserData.dart';
 
+final userData = UserData.user!;
 DateTime currentDate = DateTime.now();
 
 class HomePage extends StatefulWidget {
@@ -33,13 +35,10 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> makePayment() async {
     try {
-      // Get the payment intent from the server
-      int amount = 10000;
-      if (amountController.text.isNotEmpty) {
-        amount = int.tryParse(amountController.text) ?? 0;
-      }
+      // get the payment intent from the server
+      int amount = userData.monthlyPaymentStatus == 'paid' ? 0 : 10000;
 
-      // Fetch Payment Intent from the server
+      // fetch Payment Intent from the server
       Map<String, dynamic>? paymentIntent =
           await PaymentController.createPaymentIntent(amount);
 
@@ -70,6 +69,10 @@ class _HomePageState extends State<HomePage> {
         await PaymentController().donePayment(
             formattedAmount.toString(), formattedCurrentDate, type);
         print('Payment Success');
+        setState(() {
+          amountController.text = '0';
+        });
+        await PaymentController().updateMonthlyPaymentStatus('paid');
         paymentIntent = null;
         // ignore: use_build_context_synchronously
         Navigator.push(
@@ -129,27 +132,29 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "$currentMonth bill:",
+                    "Maintenance fee for $currentMonth:",
                     style: const TextStyle(
                         fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    "RM ${amountController.text.isEmpty ? '100' : amountController.text}",
+                    "RM ${userData.monthlyPaymentStatus == 'paid' ? '0' : '100'}",
                     style: const TextStyle(fontSize: 20),
                   )
                 ],
               ),
               const Text(""),
               ElevatedButton(
-                onPressed: () async {
-                  try {
-                    await makePayment();
-                  } catch (error) {
-                    // ignore: avoid_print
-                    print('Error during payment button press: $error');
-                  }
-                  // ignore: use_build_context_synchronously
-                },
+                onPressed: amountController.text != '0'
+                    ? () async {
+                        try {
+                          await makePayment();
+                        } catch (error) {
+                          // ignore: avoid_print
+                          print('Error during payment button press: $error');
+                        }
+                        // ignore: use_build_context_synchronously
+                      }
+                    : null, // Set onPressed to null when amount is 0
                 child: SizedBox(
                   width: screenWidth * 0.2,
                   height: 50,
@@ -226,7 +231,7 @@ class _HomePageState extends State<HomePage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => FileReportPage()));
+                                builder: (context) => const FileReportPage()));
                       },
                       child: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,

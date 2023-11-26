@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class MaintenanceHistoryController {
+class HouseCleaningHistoryController {
   final String userId;
 
-  MaintenanceHistoryController(this.userId);
+  HouseCleaningHistoryController(this.userId);
 
   final collection =
-      FirebaseFirestore.instance.collection("Maintenance Request History");
-  Future<List<List<String>>> getMaintenanceHistory() async {
+      FirebaseFirestore.instance.collection("House Cleaning History");
+  Future<List<List<String>>> getRequestHistory() async {
     try {
       QuerySnapshot<Map<String, dynamic>> querySnapshot = await collection
           .where('User_ID', isEqualTo: userId)
@@ -18,22 +18,16 @@ class MaintenanceHistoryController {
           querySnapshot.docs;
 
       return documents.map((doc) {
-        String requestId = doc['Maintenance_ID'];
+        String requestId = doc['Request_ID'];
         String requestDate = doc['Request_Date'];
         String status = doc['Request_Status'];
-        String description = doc['Description'];
-        String maintenanceType = doc['Maintenance_Type'];
-        String workerContact = doc['Worker_Contact'];
-        String workerName = doc['Worker_Name'];
+        String maintenanceType = doc['Cleaning_Type'];
 
         return [
           requestId,
           requestDate,
           status,
-          description,
           maintenanceType,
-          workerContact,
-          workerName
         ];
       }).toList();
     } catch (e) {

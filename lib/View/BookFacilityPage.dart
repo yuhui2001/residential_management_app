@@ -1,3 +1,7 @@
+// ignore_for_file: avoid_print, use_build_context_synchronously
+
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:interval_time_picker/interval_time_picker.dart';
 import 'package:intl/intl.dart';
@@ -13,6 +17,28 @@ const List<String> list = <String>[
   'Tennis Court'
 ];
 final userData = UserData.user!;
+
+class FacilityDropdownItem extends StatelessWidget {
+  final String facility;
+  final IconData icon;
+
+  const FacilityDropdownItem({
+    super.key,
+    required this.facility,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon),
+        const SizedBox(width: 8.0),
+        Text(facility),
+      ],
+    );
+  }
+}
 
 class BookFacilityPage extends StatefulWidget {
   const BookFacilityPage({Key? key}) : super(key: key);
@@ -51,6 +77,20 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
     }
   }
 
+  final Map<String, IconData> facilityIcons = {
+    'Badminton Court A': Icons.sports_tennis,
+    'Badminton Court B': Icons.sports_tennis,
+    'Basketball Court': Icons.sports_basketball,
+    'Tennis Court': Icons.sports_tennis,
+  };
+
+  Widget buildFacilityDropdownItem(String facility) {
+    return FacilityDropdownItem(
+      facility: facility,
+      icon: facilityIcons[facility]!,
+    );
+  }
+
   Future<void> handleButtonPress() async {
     try {
       final DateTime bookingDate = DateTime.parse(dateController.text);
@@ -83,6 +123,31 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
           );
           return; // prevent proceed if start time and end time are same
         }
+      }
+      int startMinutes = startTime!.hour * 60 + startTime!.minute;
+      int endMinutes = endTime!.hour * 60 + endTime!.minute;
+      int durationInMinutes = endMinutes - startMinutes;
+
+      if (durationInMinutes > 120) {
+        // Show an alert for invalid end time
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Invalid End Time"),
+              content: const Text("Maximum booking duration is 2 hours."),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("OK"),
+                ),
+              ],
+            );
+          },
+        );
+        return; // prevent proceed if booking duration > 2 hours (people might exploit the button below)
       }
 
       final facility = dropdownValue;
@@ -227,12 +292,40 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
 
   Future<void> _showEndTimePicker() async {
     TimeOfDay? selectedEndTime = await showIntervalTimePicker(
-        context: context,
-        initialTime: TimeOfDay(hour: currentTime.hour + 1, minute: 0),
-        interval: _interval,
-        helpText: "Select end time");
+      context: context,
+      initialTime: TimeOfDay(hour: startTime!.hour + 1, minute: 0),
+      interval: _interval,
+      helpText: "Select end time",
+    );
 
     if (selectedEndTime != null) {
+      // Calculate the difference in minutes
+      int startMinutes = startTime!.hour * 60 + startTime!.minute;
+      int endMinutes = selectedEndTime.hour * 60 + selectedEndTime.minute;
+      int durationInMinutes = endMinutes - startMinutes;
+
+      if (durationInMinutes > 120) {
+        // Show an alert for invalid end time
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Invalid End Time"),
+              content: const Text("Maximum booking duration is 2 hours."),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("OK"),
+                ),
+              ],
+            );
+          },
+        );
+        return;
+      }
+
       setState(() {
         endTime = selectedEndTime;
         availableSlots = []; // reset available slots after end time changed
@@ -272,21 +365,20 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
             Container(
               width: screenWidth * 0.5,
               height: 60,
-              child: DropdownMenu<String>(
-                initialSelection: list.first,
-                onSelected: (String? value) {
+              child: DropdownButton<String>(
+                value: dropdownValue,
+                onChanged: (String? value) {
                   setState(() {
                     dropdownValue = value!;
-                    availableSlots =
-                        []; // reset available slots when facility changes
+                    availableSlots = [];
                   });
                 },
-                dropdownMenuEntries: list.map<DropdownMenuEntry<String>>(
-                  (String value) {
-                    return DropdownMenuEntry<String>(
-                        value: value, label: value);
-                  },
-                ).toList(),
+                items: list.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: buildFacilityDropdownItem(value),
+                  );
+                }).toList(),
               ),
             ),
 
@@ -371,20 +463,36 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
                         onPressed: () async {
                           try {
                             final List<String> timeParts = slot.split(" ");
+                            print("Time parts: $timeParts");
+
                             if (timeParts.length == 2) {
                               final List<String> hourMinute =
                                   timeParts[0].split(":");
+                              print("Hour Minute: $hourMinute");
+
                               final int hour = int.parse(hourMinute[0]);
                               final int minute = int.parse(hourMinute[1]);
-                              final String period = timeParts[1].toUpperCase();
+                              String period = timeParts[1].toUpperCase();
+                              print(
+                                  "Hour: $hour, Minute: $minute, Period: $period");
 
                               if ((period == 'AM' || period == 'PM') &&
-                                  (hour >= 1 && hour <= 12) &&
+                                  (hour >= 0 && hour <= 23) &&
                                   (minute >= 0 && minute <= 59)) {
+                                // Convert 24-hour format to 12-hour format
+                                int displayHour = (hour == 12) ? 12 : hour;
+
+                                // Update the period for hours 12 and greater
+                                period = (hour >= 12) ? 'PM' : 'AM';
+
                                 setState(() {
                                   startTime = TimeOfDay(
-                                      hour: period == 'PM' ? hour + 12 : hour,
-                                      minute: minute);
+                                    hour: displayHour,
+                                    minute: minute,
+                                  );
+                                  final formattedTime =
+                                      '${startTime?.hour.toString().padLeft(2, '0')}:${startTime?.minute.toString().padLeft(2, '0')}';
+                                  startTimeController.text = formattedTime;
                                   availableSlots = []; // reset available slots
                                 });
                               } else {

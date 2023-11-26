@@ -29,7 +29,8 @@ class VisitorInviteController {
         "Encrypted_Visitor_Info": EncryptingController()
             .encrypt(
                 "Visitor name: $visitorName \nVisitor contact: $visitorContact \nArrival Date: $arrivalDate \nInvitation date: $invitationDate \nInvitation time: $invitationTime \nInvitor: $userData.name \nInvitor address: $userData.address")
-            .base64
+            .base64,
+        "Document_Count": documentCount
       };
 
       await collection.doc(documentName).set(postData);

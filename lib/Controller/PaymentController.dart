@@ -48,12 +48,35 @@ class PaymentController {
         "Payment_ID": paymentId,
         "Payment_Date": paymentDate,
         "Payment_Type": paymentType,
-        "Payment_Amount": amount
+        "Payment_Amount": amount,
+        "Document_Count": documentCount,
       };
 
       await collection.doc(documentName).set(postData);
     } catch (e) {
       print("Error adding data to Firestore: $e");
+    }
+  }
+
+  Future<void> updateMonthlyPaymentStatus(String status) async {
+    try {
+      final userID = userData.userid;
+      final collection = FirebaseFirestore.instance.collection("user");
+
+      QuerySnapshot<Map<String, dynamic>> querySnapshot =
+          await collection.where('userid', isEqualTo: userID).get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
+            querySnapshot.docs.first;
+
+        await documentSnapshot.reference
+            .update({'monthlyPaymentStatus': status});
+      } else {
+        print('No document found for the specified userID: $userID');
+      }
+    } catch (e) {
+      print("Error updating monthly payment status: $e");
     }
   }
 }

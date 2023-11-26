@@ -1,12 +1,18 @@
-// ignore_for_file: library_private_types_in_public_api, avoid_print
+// ignore_for_file: library_private_types_in_public_api, avoid_print, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:interval_time_picker/interval_time_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:residential_management_app/Controller/HouseCleaningController.dart';
+import 'package:residential_management_app/Controller/HouseCleaningHistoryController.dart';
 import 'package:residential_management_app/Controller/PaymentController.dart';
+import 'package:residential_management_app/Model/UserData.dart';
 import 'package:residential_management_app/View/HouseCleaningTermsPage.dart';
 import 'package:residential_management_app/View/TransactionHistoryPage.dart';
+
+List<String> titles = <String>['Request', 'History'];
+DateTime currentDate = DateTime.now();
 
 const List<String> list = <String>[
   'Basic cleaning',
@@ -20,16 +26,26 @@ const Map<String, double> prices = {
   'Spring cleaning': 270.00,
 };
 
-DateTime currentDate = DateTime.now();
-
-class HouseCleaningPage extends StatefulWidget {
-  const HouseCleaningPage({Key? key}) : super(key: key);
-
-  @override
-  _HouseCleaningPageState createState() => _HouseCleaningPageState();
+Color getStatusColor(String status) {
+  switch (status) {
+    case 'Completed':
+      return Colors.green;
+    case 'Incomplete':
+      return Colors.red;
+    default:
+      return Colors.transparent; //default
+  }
 }
 
-class _HouseCleaningPageState extends State<HouseCleaningPage> {
+class HouseCleaningBookingPage extends StatefulWidget {
+  const HouseCleaningBookingPage({Key? key}) : super(key: key);
+
+  @override
+  _HouseCleaningBookingPageState createState() =>
+      _HouseCleaningBookingPageState();
+}
+
+class _HouseCleaningBookingPageState extends State<HouseCleaningBookingPage> {
   String dropDownValue = list.first;
   DateTime? date;
   TimeOfDay? startTime;
@@ -74,13 +90,14 @@ class _HouseCleaningPageState extends State<HouseCleaningPage> {
           formattedCurrentDate,
           type,
         );
+        await HouseCleaningController()
+            .makeRequest(formattedCurrentDate, dropDownValue);
         print('Payment Success');
-        paymentIntent = null;
-        // ignore: use_build_context_synchronously
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => const TransactionHistoryPage()));
+        paymentIntent = null;
       });
     } catch (e) {
       print('Error during payment: $e');
@@ -93,9 +110,6 @@ class _HouseCleaningPageState extends State<HouseCleaningPage> {
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("House cleaning booking service"),
-      ),
       body: SingleChildScrollView(
         child: Center(
           child: Column(
@@ -281,5 +295,155 @@ class _HouseCleaningPageState extends State<HouseCleaningPage> {
     final formattedTime =
         '${selectedStartTime.hour.toString().padLeft(2, '0')}:${selectedStartTime.minute.toString().padLeft(2, '0')}';
     timeController.text = formattedTime;
+  }
+}
+
+class HouseCleaningHistory {
+  final String requestId;
+  final String type;
+  final String requestDate;
+  final String status;
+
+  HouseCleaningHistory({
+    required this.requestId,
+    required this.type,
+    required this.requestDate,
+    required this.status,
+  });
+
+  factory HouseCleaningHistory.fromMap(Map<String, dynamic> map) {
+    return HouseCleaningHistory(
+      requestId: map['Request_ID'],
+      type: map['Cleaning_Type'],
+      requestDate: map['Request_Date'],
+      status: map["Request_Status"],
+    );
+  }
+}
+
+class HistoryPage extends StatelessWidget {
+  const HistoryPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final userData = UserData.user!;
+    final userId = userData.userid;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+    return Scaffold(
+      body: FutureBuilder<List<List<dynamic>>>(
+        future: HouseCleaningHistoryController(userId).getRequestHistory(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            List<List<dynamic>> inviteHistory = snapshot.data ?? [];
+
+            return SingleChildScrollView(
+              child: Column(
+                children: inviteHistory.map(
+                  (data) {
+                    String requestId = data[0];
+                    String requestDate = data[1];
+                    String status = data[2];
+                    String cleaningType = data[3];
+
+                    return Container(
+                      padding: const EdgeInsets.all(8),
+                      margin: const EdgeInsets.all(8),
+                      width: screenWidth * 0.9,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8.0),
+                          border: Border.all(color: Colors.black)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Request ID:",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(requestId),
+                          SizedBox(height: screenHeight * 0.01),
+                          const Text(
+                            "Type:",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(cleaningType),
+                          SizedBox(height: screenHeight * 0.01),
+
+                          ///
+                          const Text(
+                            "Request date:",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(requestDate),
+                          SizedBox(height: screenHeight * 0.01),
+
+                          const Text("Status:",
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+
+                          Container(
+                            decoration: BoxDecoration(
+                                color: getStatusColor(status),
+                                borderRadius: BorderRadius.circular(8)),
+                            padding: const EdgeInsets.all(4.0),
+                            child: Text(status),
+                          ),
+                          SizedBox(height: screenHeight * 0.01),
+                        ],
+                      ),
+                    );
+                  },
+                ).toList(),
+              ),
+            );
+          }
+        },
+      ),
+    );
+  }
+}
+
+class HouseCleaningPage extends StatefulWidget {
+  const HouseCleaningPage({super.key});
+
+  @override
+  _HouseCleaningPageState createState() => _HouseCleaningPageState();
+}
+
+class _HouseCleaningPageState extends State<HouseCleaningPage>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: titles.length, vsync: this);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("House cleaning booking service"),
+        bottom: TabBar(
+          tabs: <Widget>[
+            Tab(
+              text: titles[0],
+            ),
+            Tab(
+              text: titles[1],
+            )
+          ],
+          controller: _tabController,
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: const [HouseCleaningBookingPage(), HistoryPage()],
+      ),
+    );
   }
 }

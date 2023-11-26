@@ -134,7 +134,7 @@ Color getStatusColor(String status) {
     case 'Pending':
       return Colors.yellow;
     default:
-      return Colors.transparent; // or any default color
+      return Colors.transparent; // default color
   }
 }
 

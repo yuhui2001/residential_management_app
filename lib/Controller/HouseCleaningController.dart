@@ -1,13 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:residential_management_app/Model/UserData.dart';
 
-class MaintenanceController {
+class HouseCleaningController {
   final userData = UserData.user!;
   final collection =
-      FirebaseFirestore.instance.collection("Maintenance Request History");
+      FirebaseFirestore.instance.collection("House Cleaning History");
 
-  Future<void> makeRequest(
-      String requestDate, String maintenanceType, String description) async {
+  Future<void> makeRequest(String requestDate, String cleaningType) async {
     try {
       final userId = userData.userid;
 
@@ -16,17 +15,14 @@ class MaintenanceController {
 
       final documentName = "Booking ${documentCount + 1}";
 
-      String requestID = "MAI${documentCount + 1}";
+      String requestID = "HCL${documentCount + 1}";
 
       final postData = {
         "Request_Date": requestDate,
         "User_ID": userId,
-        "Maintenance_ID": requestID,
-        "Maintenance_Type": maintenanceType,
-        "Description": description,
-        "Request_Status": "Pending",
-        "Worker_Name": "Pending...",
-        "Worker_Contact": "Pending...",
+        "Request_ID": requestID,
+        "Cleaning_Type": cleaningType,
+        "Request_Status": "Incomplete",
         "Document_Count": documentCount
       };
 

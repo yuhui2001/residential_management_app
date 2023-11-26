@@ -10,7 +10,7 @@ class PaymentHistoryController {
     try {
       QuerySnapshot<Map<String, dynamic>> querySnapshot = await collection
           .where('User_ID', isEqualTo: userId)
-          .orderBy("Payment_ID", descending: true)
+          .orderBy("Document_Count", descending: true)
           .get();
 
       List<QueryDocumentSnapshot<Map<String, dynamic>>> documents =

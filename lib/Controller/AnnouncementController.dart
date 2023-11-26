@@ -9,7 +9,7 @@ class AnnouncementController {
   Future<List<Map<String, dynamic>>> getAnnouncements() async {
     try {
       QuerySnapshot<Map<String, dynamic>> querySnapshot =
-          await collection.orderBy("Announcement_ID", descending: true).get();
+          await collection.orderBy("Document_Count", descending: true).get();
 
       return querySnapshot.docs.map((doc) => doc.data()).toList();
     } catch (e) {
