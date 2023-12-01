@@ -1,6 +1,6 @@
 import 'package:encrypt/encrypt.dart';
 
-class EncryptingController {
+class EncryptingModel {
   Encrypted encrypt(String plainText) {
     const keyString = "CreatedbYyeeehUI";
     final key = Key.fromUtf8(keyString);

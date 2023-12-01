@@ -161,7 +161,6 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
       if (isAvailable) {
         await BookFacilityController().bookFacility(bookingDate, startTime!,
             endTime!, facilityCode, dropdownValue, description);
-        // ignore: use_build_context_synchronously
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -180,7 +179,7 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
                             endTime: endTimeController.text,
                             facilityName: dropdownValue,
                             userBookedDate: bookingDate.toString(),
-                            encryptedBookingInfo: EncryptingController()
+                            encryptedBookingInfo: EncryptingModel()
                                 .encrypt(
                                     "Booking user: $userName \nBooking userId: $userId \nBooking date: $bookingDate \nStart time: $startTime \nEnd time: $endTime Facility Id: $facilityCode")
                                 .base64),
@@ -197,7 +196,6 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
         );
       } else {
         // facility is not available, show a message
-        // ignore: use_build_context_synchronously
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -220,7 +218,6 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
         );
       }
     } catch (e) {
-      // ignore: avoid_print
       print("Error handling button press: $e");
     }
   }
@@ -239,7 +236,6 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
         availableSlots = slots;
       });
     } catch (e) {
-      // ignore: avoid_print
       print("Error handling getAvailableSlots: $e");
     }
   }
@@ -255,7 +251,6 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
     if (selectedStartTime != null) {
       if (selectedStartTime.hour < 8 || selectedStartTime.hour > 23) {
         // Show an alert for invalid start time
-        // ignore: use_build_context_synchronously
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -381,7 +376,10 @@ class _BookFacilityPageState extends State<BookFacilityPage> {
                 }).toList(),
               ),
             ),
-
+            const Text(
+              "*Maximum booking time is 2 hours*",
+              style: TextStyle(color: Colors.red),
+            ),
             const Text("Date:\n"),
             Text(
               date != null

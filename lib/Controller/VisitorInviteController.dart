@@ -26,7 +26,7 @@ class VisitorInviteController {
         "Visitor_Contact": visitorContact,
         "Arrival_Date": arrivalDate,
         "Arrival_Time": arrivalTime,
-        "Encrypted_Visitor_Info": EncryptingController()
+        "Encrypted_Visitor_Info": EncryptingModel()
             .encrypt(
                 "Visitor name: $visitorName \nVisitor contact: $visitorContact \nArrival Date: $arrivalDate \nInvitation date: $invitationDate \nInvitation time: $invitationTime \nInvitor: $userData.name \nInvitor address: $userData.address")
             .base64,

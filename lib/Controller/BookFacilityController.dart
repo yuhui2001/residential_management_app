@@ -91,7 +91,7 @@ class BookFacilityController {
         "Facility_ID": facilityID,
         "Facility_Name": facilityName,
         "Description": description,
-        "Encrypted_Info": EncryptingController()
+        "Encrypted_Info": EncryptingModel()
             .encrypt(
                 "Booking user: $userName \nBooking userId: $userID \nBooking date: $bookingDate \nStart time: $startTime \nEnd time: $endTime Facility Id: $facilityID")
             .base64

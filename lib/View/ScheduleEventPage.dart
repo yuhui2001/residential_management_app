@@ -114,7 +114,7 @@ class _ScheduleEventPageState extends State<ScheduleEventPage> {
                             endTime: endTimeController.text,
                             facilityName: dropdownValue,
                             userBookedDate: bookingDate.toString(),
-                            encryptedBookingInfo: EncryptingController()
+                            encryptedBookingInfo: EncryptingModel()
                                 .encrypt(
                                     "Booking user: $userName \nBooking userId: $userId \nBooking date: $bookingDate \nStart time: $startTime \nEnd time: $endTime Facility Id: $facilityCode")
                                 .base64),

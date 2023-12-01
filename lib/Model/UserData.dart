@@ -1,14 +1,15 @@
 class UserData {
-  static UserData? user; // change the type to UserData
+  static UserData? user;
 
   final String name;
   final String address;
   final String userid;
-  final String monthlyPaymentStatus;
+  String monthlyPaymentStatus;
 
-  UserData(
-      {required this.name,
-      required this.address,
-      required this.userid,
-      required this.monthlyPaymentStatus});
+  UserData({
+    required this.name,
+    required this.address,
+    required this.userid,
+    required this.monthlyPaymentStatus,
+  });
 }

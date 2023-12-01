@@ -50,7 +50,8 @@ class _InvitePageState extends State<InvitePage> {
     final String inviteTime = DateFormat('Hm').format(currentDate);
     final String arrivalDate = arrivalDateController.text;
     final String arrivalTime = arrivalTimeController.text;
-    final encryptedVisitorName = EncryptingController().encrypt(visitorName);
+    final encryptedVisitorInfo = EncryptingModel().encrypt(
+        "Visitor name: $visitorName \nVisitor contact: $visitorNumber \nArrival Date: $arrivalDate \nInvitation date: $inviteDate \nInvitation time: $inviteTime \nInvitor: $userData.name \nInvitor address: $userData.address");
 
     VisitorInviteController().invite(visitorName, visitorNumber, inviteDate,
         inviteTime, arrivalDate, arrivalTime);
@@ -62,7 +63,24 @@ class _InvitePageState extends State<InvitePage> {
                 visitorName: visitorName,
                 visitorContact: visitorNumber,
                 ownerAddress: userData.address,
-                encryptedVisitorInfo: encryptedVisitorName.base64)));
+                encryptedVisitorInfo: encryptedVisitorInfo.base64)));
+  }
+
+  Future<void> _showTimePicker() async {
+    TimeOfDay? selectedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (selectedTime == null) return;
+
+    setState(() {
+      time = selectedTime;
+    });
+
+    final formattedTime =
+        '${selectedTime.hour.toString().padLeft(2, '0')}:${selectedTime.minute.toString().padLeft(2, '0')}';
+    arrivalTimeController.text = formattedTime;
   }
 
   @override
@@ -137,6 +155,8 @@ class _InvitePageState extends State<InvitePage> {
 
                 final formattedDate = newDate.toString();
                 arrivalDateController.text = formattedDate;
+
+                _showTimePicker();
               },
               child: const Text("Choose date"),
             ),
@@ -150,20 +170,7 @@ class _InvitePageState extends State<InvitePage> {
             ),
             ElevatedButton(
               onPressed: () async {
-                TimeOfDay? selectedTime = await showTimePicker(
-                  context: context,
-                  initialTime: TimeOfDay.now(),
-                );
-
-                if (selectedTime == null) return;
-
-                setState(() {
-                  time = selectedTime;
-                });
-
-                final formattedTime =
-                    '${selectedTime.hour.toString().padLeft(2, '0')}:${selectedTime.minute.toString().padLeft(2, '0')}';
-                arrivalTimeController.text = formattedTime;
+                _showTimePicker();
               },
               child: const Text("Choose time"),
             ),

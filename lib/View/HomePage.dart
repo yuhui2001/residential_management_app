@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, use_build_context_synchronously
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -15,8 +15,10 @@ import 'package:intl/intl.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:residential_management_app/Controller/PaymentController.dart';
 import 'package:residential_management_app/Model/UserData.dart';
+import 'package:residential_management_app/Controller/HomePageController.dart';
 
 final userData = UserData.user!;
+final userid = userData.userid;
 DateTime currentDate = DateTime.now();
 
 class HomePage extends StatefulWidget {
@@ -30,23 +32,42 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final int _selectedIndex = 0;
   Timer? countdownTimer;
-  TextEditingController amountController = TextEditingController();
   String formattedCurrentDate = DateFormat('yyyy-MM-dd').format(currentDate);
+  String monthlyStatus = 'unpaid';
+
+  @override
+  void initState() {
+    super.initState();
+    fetchMonthlyStatus();
+  }
+
+  Future<void> fetchMonthlyStatus() async {
+    try {
+      List<String> monthlyStatusList =
+          await HomePageController(userid).getMonthlyStatus();
+
+      if (monthlyStatusList.isNotEmpty) {
+        setState(() {
+          monthlyStatus = monthlyStatusList.first;
+        });
+      }
+    } catch (e) {
+      print('Error fetching monthly status: $e');
+    }
+  }
 
   Future<void> makePayment() async {
     try {
       // get the payment intent from the server
-      int amount = userData.monthlyPaymentStatus == 'paid' ? 0 : 10000;
+      int amount = monthlyStatus == 'paid' ? 0 : 10000;
 
       // fetch Payment Intent from the server
       Map<String, dynamic>? paymentIntent =
           await PaymentController.createPaymentIntent(amount);
 
-      // ignore: avoid_print
       print('Payment Intent: $paymentIntent');
 
       // Initialize payment sheet
-
       await Stripe.instance
           .initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
@@ -57,7 +78,6 @@ class _HomePageState extends State<HomePage> {
         ),
       )
           .then((value) {
-        // ignore: avoid_print
         print('Payment Sheet Initialized Successfully');
       });
 
@@ -69,16 +89,21 @@ class _HomePageState extends State<HomePage> {
         await PaymentController().donePayment(
             formattedAmount.toString(), formattedCurrentDate, type);
         print('Payment Success');
-        setState(() {
-          amountController.text = '0';
-        });
         await PaymentController().updateMonthlyPaymentStatus('paid');
         paymentIntent = null;
-        // ignore: use_build_context_synchronously
+        setState(() {
+          monthlyStatus = 'paid';
+        });
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => const TransactionHistoryPage()));
+        ModalRoute.of(context)!.addLocalHistoryEntry(
+          LocalHistoryEntry(onRemove: () {
+            // This callback will be called when the page is popped
+            setState(() {});
+          }),
+        );
       });
     } catch (e) {
       print('Error during payment: $e');
@@ -112,6 +137,7 @@ class _HomePageState extends State<HomePage> {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     String currentMonth = DateFormat('MMMM').format(DateTime.now());
+    print(monthlyStatus);
 
     return Scaffold(
       appBar: AppBar(
@@ -137,22 +163,20 @@ class _HomePageState extends State<HomePage> {
                         fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    "RM ${userData.monthlyPaymentStatus == 'paid' ? '0' : '100'}",
+                    "RM ${monthlyStatus == 'paid' ? '0' : '100'}",
                     style: const TextStyle(fontSize: 20),
                   )
                 ],
               ),
               const Text(""),
               ElevatedButton(
-                onPressed: amountController.text != '0'
+                onPressed: monthlyStatus != 'paid'
                     ? () async {
                         try {
                           await makePayment();
                         } catch (error) {
-                          // ignore: avoid_print
                           print('Error during payment button press: $error');
                         }
-                        // ignore: use_build_context_synchronously
                       }
                     : null, // Set onPressed to null when amount is 0
                 child: SizedBox(
