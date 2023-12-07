@@ -135,7 +135,7 @@ class _ScheduleEventPageState extends State<ScheduleEventPage> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: const Text("Error"),
+              title: const Text("Booking failed"),
               content: const Text(
                   "Facility is not available for the selected time slot."),
               actions: [
