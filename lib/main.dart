@@ -18,14 +18,16 @@ void main() async {
   Stripe.merchantIdentifier = 'hello world';
   ////////////////////////////////////////////
   //// This block of code is just to create a encrypted user, it will not included in the actual app.
-  // const String documentName = "encrypted User";
-  // const String username = "encrypt";
-  // const String password = "20004156";
-  // const String userid = "USR1000";
-  // const String name = "Encrypted User";
-  // const String address = "Big home";
-  // CreateUser()
-  //     .addUser(documentName, username, password, userid, name, address);
+  //const String documentName = "user1";
+  //const String username = "limeehui";
+  //const String password = "20004156";
+  //const String userid = "USR1000";
+  //const String name = "Lim Ee Hui";
+  //const String address =
+  //  "23, Jalan Gembira 2, Taman Gembira, 45264, Puchong, Slangor";
+  //const String monthlyPaymentStatus = "unpaid";
+  //CreateUser().addUser(documentName, username, password, userid, name, address,
+  //    monthlyPaymentStatus);
   /////////////////////////////////////////////
   ///
   runApp(const MyApp());
@@ -39,6 +41,6 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'SMART Jiran',
         theme: ThemeData(),
-        home: LoginPage());
+        home: const LoginPage());
   }
 }

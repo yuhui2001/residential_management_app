@@ -1,3 +1,4 @@
+// This file of code is for demo purpose to create a user, it will not be included in the actual app
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:encrypt/encrypt.dart';
 
@@ -12,6 +13,7 @@ class CreateUser {
     String userid,
     String name,
     String address,
+    String monthlyPaymentStatus
   ) async {
     try {
       final encryptedPassword = encrypt(key, password);
@@ -25,6 +27,7 @@ class CreateUser {
         "userid": userid,
         "name": name,
         "address": address,
+        "monthlyPaymentStatus": monthlyPaymentStatus
       };
       await documentReference.set(postData);
       print("User added successfully!");
