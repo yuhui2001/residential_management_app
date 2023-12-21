@@ -1,16 +1,19 @@
 # residential_management_app
 
-A new Flutter project.
+This residential_management_app name SMART-Jiran is a flutter app to allow user to carry out residentail managing task.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+To run this flutter application, you make sure you have the following installed on your computer:
 
-A few resources to get you started if this is your first Flutter project:
+- [Flutter](https://flutter.dev/docs/get-started/install)
+- [Dart](https://dart.dev/get-dart)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+To ensure every dependencies is installed properly, you can run the foloowing command in the terminal
+flutter pub get
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+To run a demo, can use the account below:
+username: limeehui
+password: 20004156
+
+To run the program, an Android emulator must been activated first before running the program.
